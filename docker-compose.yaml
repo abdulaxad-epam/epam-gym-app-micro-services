@@ -19,7 +19,8 @@ services:
 
 
   main-service:
-    image: abdulaxadsepamhub/epam-gym-app-main-service:1.0-0
+    build:
+      context: ./epam-gym-app-main-service
     depends_on:
       db:
         condition: service_healthy
@@ -46,7 +47,8 @@ services:
       start_period: 30s
 
   trainer-workload-service:
-    image:  abdulaxadsepamhub/epam-gym-app-trainer-workload-service:1.0-0
+    build:
+      context: ./epam-gym-app-trainer-workload-service
     depends_on:
       eureka-service:
         condition: service_healthy
@@ -65,7 +67,8 @@ services:
       start_period: 30s
 
   eureka-service:
-    image: abdulaxadsepamhub/epam-gym-app-eureka-service:1.0-0
+    build:
+      context: ./epam-gym-app-eureka-service
     ports:
       - '8761:8761'
     networks:
