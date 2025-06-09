@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="epam.configuration.SwaggerConfigurationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-06-09T14:14:23.259Z" hostname="Abdulaxads-Apple-M1-Max.local" time="0.013">
-  <properties/>
-  <testcase name="shouldCreateOpenAPIDocumentationBean()" classname="epam.configuration.SwaggerConfigurationTest" time="0.013"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

@@ -1,1 +1,10 @@
 .idea/
+
+epam-gym-app-eureka-service/build/
+epam-gym-app-eureka-service/.gradle/
+
+epam-gym-app-main-service/build/
+epam-gym-app-main-service/.gradle/
+
+epam-gym-app-trainer-workload-service/build/
+epam-gym-app-trainer-workload-service/.gradle/

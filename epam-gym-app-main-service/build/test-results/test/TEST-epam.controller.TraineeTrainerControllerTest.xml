@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="epam.controller.TraineeTrainerControllerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-06-09T14:14:22.572Z" hostname="Abdulaxads-Apple-M1-Max.local" time="0.036">
-  <properties/>
-  <testcase name="testUpdateTraineeTrainer_ShouldReturnUpdatedTrainerList()" classname="epam.controller.TraineeTrainerControllerTest" time="0.034"/>
-  <testcase name="testGetAssignedTrainers_ShouldReturnTraineeResponse()" classname="epam.controller.TraineeTrainerControllerTest" time="0.001"/>
-  <testcase name="testGetAssignedTrainers_ShouldReturnNoContent()" classname="epam.controller.TraineeTrainerControllerTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

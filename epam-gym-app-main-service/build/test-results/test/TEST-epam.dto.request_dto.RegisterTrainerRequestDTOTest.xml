@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="epam.dto.request_dto.RegisterTrainerRequestDTOTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-06-09T14:14:23.404Z" hostname="Abdulaxads-Apple-M1-Max.local" time="0.013">
-  <properties/>
-  <testcase name="testValidRegisterTrainerRequest()" classname="epam.dto.request_dto.RegisterTrainerRequestDTOTest" time="0.003"/>
-  <testcase name="testBlankSpecialization()" classname="epam.dto.request_dto.RegisterTrainerRequestDTOTest" time="0.003"/>
-  <testcase name="testNullUserDetails()" classname="epam.dto.request_dto.RegisterTrainerRequestDTOTest" time="0.004"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

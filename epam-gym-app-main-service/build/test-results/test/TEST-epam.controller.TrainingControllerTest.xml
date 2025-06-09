@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="epam.controller.TrainingControllerTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2025-06-09T14:14:19.853Z" hostname="Abdulaxads-Apple-M1-Max.local" time="0.002">
-  <properties/>
-  <testcase name="testCreateTraining_ShouldReturnCreatedTraining()" classname="epam.controller.TrainingControllerTest" time="0.001"/>
-  <testcase name="testDeleteTraining_ShouldReturnSuccessMessage()" classname="epam.controller.TrainingControllerTest" time="0.001"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

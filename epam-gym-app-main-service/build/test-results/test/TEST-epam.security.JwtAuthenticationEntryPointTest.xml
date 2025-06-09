@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="epam.security.JwtAuthenticationEntryPointTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-06-09T14:14:06.798Z" hostname="Abdulaxads-Apple-M1-Max.local" time="1.145">
-  <properties/>
-  <testcase name="testCommence_ShouldSetUnauthorizedStatusAndJsonErrorMessage()" classname="epam.security.JwtAuthenticationEntryPointTest" time="1.145"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
