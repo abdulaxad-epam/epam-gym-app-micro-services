@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="epam.actuator.DatabaseHealthIndicatorTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2025-06-09T14:14:22.991Z" hostname="Abdulaxads-Apple-M1-Max.local" time="0.083">
+  <properties/>
+  <testcase name="testHealth_Up()" classname="epam.actuator.DatabaseHealthIndicatorTest" time="0.082"/>
+  <testcase name="testHealth_Down()" classname="epam.actuator.DatabaseHealthIndicatorTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

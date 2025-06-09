@@ -1,0 +1,88 @@
+services:
+  db:
+    image: postgres:17-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: abdulaxad
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: main-service
+    networks:
+      - bridge-network
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL","pg_isready -U abdulaxad -d main-service" ]
+      retries: 3
+      interval: 3s
+      timeout: 3s
+
+
+  main-service:
+    image: abdulaxadsepamhub/epam-gym-app-main-service:1.0-0
+    depends_on:
+      db:
+        condition: service_healthy
+
+      trainer-workload-service:
+        condition: service_healthy
+      eureka-service:
+        condition: service_healthy
+    ports:
+      - '8080:8080'
+    networks:
+      - bridge-network
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/main-service
+      SPRING_DATASOURCE_USERNAME: abdulaxad
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_INSTANCE_HOSTNAME: eureka-service
+      EUREKA_INSTANCE_PREFER-IP-ADDRESS: true
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  trainer-workload-service:
+    image:  abdulaxadsepamhub/epam-gym-app-trainer-workload-service:1.0-0
+    depends_on:
+      eureka-service:
+        condition: service_healthy
+    ports:
+      - '8081:8081'
+    networks:
+      - bridge-network
+    environment:
+      EUREKA_INSTANCE_HOSTNAME: eureka-service
+      EUREKA_INSTANCE_PREFER-IP-ADDRESS: true
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  eureka-service:
+    image: abdulaxadsepamhub/epam-gym-app-eureka-service:1.0-0
+    ports:
+      - '8761:8761'
+    networks:
+      - bridge-network
+    environment:
+      EUREKA_INSTANCE_HOSTNAME: eureka-service
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+networks:
+  bridge-network:
+    driver: bridge
+
+volumes:
+  postgres:
+    driver: local

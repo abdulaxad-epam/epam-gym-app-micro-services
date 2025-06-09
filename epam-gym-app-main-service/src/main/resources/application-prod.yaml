@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/gym
+    driver-class-name: org.postgresql.Driver
+    username: abdulaxad
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+      jakarta.persistence.sql-load-script-source: classpath:database_initializer/data.sql
+    open-in-view: true
+
+  data:
+
+    jpa:
+      repositories:
+        enabled: true
+
+server:
+  compression:
+    enabled: true
+  port: 80
+
+application:
+  security:
+    jwt-token:
+      access-expiration: 3600000 # 1 hr
+      refresh-expiration: 15778800000
+      keys:
+        secret-key: "NZ6y7O9E0DhEPTbE9rfBo6KTFsHAZnMg4k68CDp2woYIaXbmYTWcvbzIuHO7_37GT79Xd"

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="epam.util.UsernameGeneratorListenerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-06-09T14:14:22.400Z" hostname="Abdulaxads-Apple-M1-Max.local" time="0.015">
+  <properties/>
+  <testcase name="generateUsername_ShouldGenerateUsername_WhenUsernameIsNull()" classname="epam.util.UsernameGeneratorListenerTest" time="0.015"/>
+  <system-out><![CDATA[2025-06-09T19:14:22.401+05:00  INFO 51102 --- [epam-gym-app-main-service] [    Test worker] epam.util.UsernameGeneratorListener      : Finding next available index...
+2025-06-09T19:14:22.415+05:00  INFO 51102 --- [epam-gym-app-main-service] [    Test worker] epam.util.UsernameGeneratorListener      : Next available index found: 0
+2025-06-09T19:14:22.415+05:00  INFO 51102 --- [epam-gym-app-main-service] [    Test worker] epam.util.UsernameGeneratorListener      : Generated Username: john.doe
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="epam.exception.GlobalExceptionHandlerTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2025-06-09T14:14:19.859Z" hostname="Abdulaxads-Apple-M1-Max.local" time="0.085">
+  <properties/>
+  <testcase name="testHandleUserNotFound()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.001"/>
+  <testcase name="testHandleInvalidTokenType()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.0"/>
+  <testcase name="testHandleConstraintViolation()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.069"/>
+  <testcase name="testHandleUserNotAuthenticated()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.001"/>
+  <testcase name="testHandleMethodArgumentNotValid()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.007"/>
+  <testcase name="testHandleTrainingNotFound()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.0"/>
+  <testcase name="testHandleTraineeNotFound()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.0"/>
+  <testcase name="testHandleTrainingTypeNotFound()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.001"/>
+  <testcase name="testHandleTraineeHasNotAssignedBefore()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.0"/>
+  <testcase name="testHandleGenericException()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.0"/>
+  <testcase name="testHandleTrainerWorkloadIsUnavailable()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.0"/>
+  <testcase name="testHandleJsonParsingException()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.001"/>
+  <testcase name="testHandleUsernameGenerate()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.0"/>
+  <testcase name="testHandleTraineeHasAssignedBefore()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.0"/>
+  <testcase name="testHandleTrainerNotFound()" classname="epam.exception.GlobalExceptionHandlerTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

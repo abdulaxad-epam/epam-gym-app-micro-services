@@ -1,0 +1,91 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.1.4'
+    id 'jacoco'
+}
+
+group = 'epam'
+version = '1.0-0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+ext {
+    springCloudVersion = "2023.0.1"
+    openApiVersion = "2.3.0"
+    mapstructVersion = "1.6.0.Beta1"
+    mapstructBindingVersion = "0.2.0"
+    lombokVersion = "1.18.36"
+    instancioVersion = "5.0.2"
+    suitVersion = "1.10.0"
+    loggerVersion = "2.0.16"
+    mockitoVersion = "5.2.0"
+    jjwtVersion = "0.12.6"
+    aspectjVersion = "1.9.19"
+    hoverflyVersion = "0.19.1"
+    wiremockVersion = "3.9.1"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    // Implementation dependencies
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-circuitbreaker-resilience4j'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: jjwtVersion
+    implementation group: 'org.aspectj', name: 'aspectjweaver', version: aspectjVersion
+    implementation group: 'com.h2database', name: 'h2'
+    implementation group: 'org.postgresql', name: 'postgresql'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: loggerVersion
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: openApiVersion
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: mapstructVersion
+
+    // CompileOnly dependencies
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+
+    // RuntimeOnly dependencies
+    runtimeOnly group: 'io.micrometer', name: 'micrometer-registry-prometheus'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: jjwtVersion
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: jjwtVersion
+
+    // AnnotationProcessor dependencies
+    annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapstructVersion
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: mapstructBindingVersion
+
+    // Test dependencies
+
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    testImplementation group: 'org.springframework.security', name: 'spring-security-test'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter'
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-engine', version: suitVersion
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-api', version: suitVersion
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-launcher', version: suitVersion
+    testImplementation group: 'junit', name: 'junit'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: mockitoVersion
+    testImplementation group: 'org.instancio', name: 'instancio-junit', version: instancioVersion
+}
+
+test {
+    useJUnitPlatform()
+}

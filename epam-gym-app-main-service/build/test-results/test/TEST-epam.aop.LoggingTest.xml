@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="epam.aop.LoggingTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2025-06-09T14:14:23.075Z" hostname="Abdulaxads-Apple-M1-Max.local" time="0.121">
+  <properties/>
+  <testcase name="testDebugLogging()" classname="epam.aop.LoggingTest" time="0.119"/>
+  <testcase name="testGetTransactionId()" classname="epam.aop.LoggingTest" time="0.0"/>
+  <testcase name="testWarnLogging()" classname="epam.aop.LoggingTest" time="0.001"/>
+  <testcase name="testResetTransactionId()" classname="epam.aop.LoggingTest" time="0.0"/>
+  <testcase name="testErrorLogging()" classname="epam.aop.LoggingTest" time="0.0"/>
+  <testcase name="testInfoLogging()" classname="epam.aop.LoggingTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

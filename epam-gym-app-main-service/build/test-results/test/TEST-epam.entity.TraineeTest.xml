@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="epam.entity.TraineeTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-06-09T14:14:22.949Z" hostname="Abdulaxads-Apple-M1-Max.local" time="0.042">
+  <properties/>
+  <testcase name="shouldPersistTraineeWithUser()" classname="epam.entity.TraineeTest" time="0.042"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

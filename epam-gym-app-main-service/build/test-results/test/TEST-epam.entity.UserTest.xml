@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="epam.entity.UserTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2025-06-09T14:14:19.946Z" hostname="Abdulaxads-Apple-M1-Max.local" time="0.023">
+  <properties/>
+  <testcase name="testUserHandlesNullUsername()" classname="epam.entity.UserTest" time="0.005"/>
+  <testcase name="testUserHandlesEmptyUsername()" classname="epam.entity.UserTest" time="0.002"/>
+  <testcase name="testUsernameUniqueness()" classname="epam.entity.UserTest" time="0.003"/>
+  <testcase name="testUserHandlesNullFirstName()" classname="epam.entity.UserTest" time="0.001"/>
+  <testcase name="testUserInequality()" classname="epam.entity.UserTest" time="0.003"/>
+  <testcase name="testUserHandlesNullPassword()" classname="epam.entity.UserTest" time="0.001"/>
+  <testcase name="testUserEquality()" classname="epam.entity.UserTest" time="0.002"/>
+  <testcase name="testUserHandlesInactiveState()" classname="epam.entity.UserTest" time="0.001"/>
+  <testcase name="testUserHandlesNullLastName()" classname="epam.entity.UserTest" time="0.001"/>
+  <testcase name="testUserCreation()" classname="epam.entity.UserTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

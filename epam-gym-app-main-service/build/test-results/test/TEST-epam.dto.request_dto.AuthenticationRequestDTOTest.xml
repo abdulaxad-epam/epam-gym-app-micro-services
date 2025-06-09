@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="epam.dto.request_dto.AuthenticationRequestDTOTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2025-06-09T14:14:17.022Z" hostname="Abdulaxads-Apple-M1-Max.local" time="0.031">
+  <properties/>
+  <testcase name="testNullPassword()" classname="epam.dto.request_dto.AuthenticationRequestDTOTest" time="0.022"/>
+  <testcase name="testValidAuthenticateRequest()" classname="epam.dto.request_dto.AuthenticationRequestDTOTest" time="0.003"/>
+  <testcase name="testNullUsername()" classname="epam.dto.request_dto.AuthenticationRequestDTOTest" time="0.003"/>
+  <testcase name="testBlankUsername()" classname="epam.dto.request_dto.AuthenticationRequestDTOTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

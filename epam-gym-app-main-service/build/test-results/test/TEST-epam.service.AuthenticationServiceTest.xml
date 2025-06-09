@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="epam.service.AuthenticationServiceTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2025-06-09T14:14:22.416Z" hostname="Abdulaxads-Apple-M1-Max.local" time="0.156">
+  <properties/>
+  <testcase name="testAuthenticate_ValidCredentials()" classname="epam.service.AuthenticationServiceTest" time="0.141"/>
+  <testcase name="testChangePassword_Success()" classname="epam.service.AuthenticationServiceTest" time="0.001"/>
+  <testcase name="testRegisterTrainee()" classname="epam.service.AuthenticationServiceTest" time="0.002"/>
+  <testcase name="logout_shouldCallJwtServiceBlackList()" classname="epam.service.AuthenticationServiceTest" time="0.0"/>
+  <testcase name="registerTrainer_shouldReturnAuthResponse()" classname="epam.service.AuthenticationServiceTest" time="0.002"/>
+  <testcase name="testChangePassword_Failed()" classname="epam.service.AuthenticationServiceTest" time="0.001"/>
+  <testcase name="testRefreshToken_InvalidToken()" classname="epam.service.AuthenticationServiceTest" time="0.001"/>
+  <testcase name="testChangePassword_Thrown()" classname="epam.service.AuthenticationServiceTest" time="0.001"/>
+  <testcase name="testAuthenticate_UserBlocked()" classname="epam.service.AuthenticationServiceTest" time="0.001"/>
+  <testcase name="testRefreshToken_Valid()" classname="epam.service.AuthenticationServiceTest" time="0.001"/>
+  <testcase name="testRefreshToken_InvalidHeader()" classname="epam.service.AuthenticationServiceTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
