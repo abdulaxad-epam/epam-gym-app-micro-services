@@ -4,10 +4,12 @@ import epam.dto.TrainerWorkloadSummaryInMonthsResponseDTO;
 import epam.dto.TrainerWorkloadSummaryInYearsResponseDTO;
 import epam.dto.TrainerWorkloadSummaryResponseDTO;
 import epam.entity.TrainerWorkload;
+import epam.messaging.producer.TrainerActionProducer;
 import epam.service.TrainerWorkloadService;
 import epam.service.TrainerWorkloadSummaryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jms.core.MessagePostProcessor;
 import org.springframework.stereotype.Service;
 
 import java.time.Month;
@@ -22,6 +24,10 @@ import java.util.stream.Collectors;
 public class TrainerWorkloadSummaryServiceImpl implements TrainerWorkloadSummaryService {
 
     private final TrainerWorkloadService trainerWorkloadService;
+
+    private final TrainerActionProducer trainerActionProducer;
+
+    private final TrainerWorkloadMessagePropertiesBuilder propertiesBuilder;
 
     @Override
     public TrainerWorkloadSummaryResponseDTO getTrainerWorkloadSummary(String trainerUsername, Integer year, Integer month) {
@@ -63,5 +69,12 @@ public class TrainerWorkloadSummaryServiceImpl implements TrainerWorkloadSummary
                 .status(isActive)
                 .workloadSummaryInYears(summary)
                 .build();
+    }
+
+    @Override
+    public void produce(String username, Integer year, Integer month) {
+        MessagePostProcessor messagePostProcessor = propertiesBuilder.buildMessagePropertyOnProduce(year, month);
+        TrainerWorkloadSummaryResponseDTO workloadSummaryResponseDTO = getTrainerWorkloadSummary(username, year, month);
+        trainerActionProducer.produceOnAction(messagePostProcessor, workloadSummaryResponseDTO);
     }
 }

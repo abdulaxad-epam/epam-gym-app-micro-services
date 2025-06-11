@@ -1,6 +1,7 @@
 package epam.security;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,7 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
-
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -31,6 +32,7 @@ public class SpringSecurity {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ServiceAuthenticationEntryPoint serviceAuthenticationEntryPoint) throws Exception {
+        log.info("Filtering service authentication");
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize

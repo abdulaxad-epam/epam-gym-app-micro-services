@@ -8,8 +8,9 @@ import epam.exception.TrainerWorkloadNotFoundException;
 import epam.mapper.TrainerWorkloadMapper;
 import epam.repostiory.TrainerWorkloadRepository;
 import epam.service.TrainerWorkloadService;
-import lombok.RequiredArgsConstructor;
+import epam.service.TrainerWorkloadSummaryService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +20,19 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class TrainerWorkloadServiceImpl implements TrainerWorkloadService {
 
     private final TrainerWorkloadRepository trainerWorkloadRepository;
     private final TrainerWorkloadMapper trainerWorkloadMapper;
+    private final TrainerWorkloadSummaryService trainerWorkloadSummaryService;
+
+    public TrainerWorkloadServiceImpl(@Lazy TrainerWorkloadRepository trainerWorkloadRepository,
+                                      @Lazy TrainerWorkloadMapper trainerWorkloadMapper,
+                                      @Lazy TrainerWorkloadSummaryService trainerWorkloadSummaryService) {
+        this.trainerWorkloadRepository = trainerWorkloadRepository;
+        this.trainerWorkloadMapper = trainerWorkloadMapper;
+        this.trainerWorkloadSummaryService = trainerWorkloadSummaryService;
+    }
 
     @Override
     public List<TrainerWorkload> getTrainerWorkload(String trainerUsername, Integer year, Integer month) {
@@ -56,7 +65,10 @@ public class TrainerWorkloadServiceImpl implements TrainerWorkloadService {
             TrainerWorkload workload = trainerWorkload.get();
             int updatedDuration = workload.getTrainingDuration() + trainerWorkloadRequestDTO.getTrainingDuration();
             workload.setTrainingDuration(updatedDuration);
-            return trainerWorkloadMapper.toTrainerWorkloadResponseDTO(workload);
+            TrainerWorkloadResponseDTO workloadResponseDTO = trainerWorkloadMapper.toTrainerWorkloadResponseDTO(workload);
+
+            trainerWorkloadSummaryService.produce(workloadResponseDTO.getTrainerUsername(), year, month);
+            return workloadResponseDTO;
         }
 
         trainerWorkloadRequestDTO.setTrainingDate(LocalDate.of(year, month, 1));
@@ -64,14 +76,17 @@ public class TrainerWorkloadServiceImpl implements TrainerWorkloadService {
         TrainerWorkload workload = trainerWorkloadMapper.toTrainerWorkload(trainerWorkloadRequestDTO);
         TrainerWorkload save = trainerWorkloadRepository.save(workload);
 
-        return trainerWorkloadMapper.toTrainerWorkloadResponseDTO(save);
+        TrainerWorkloadResponseDTO workloadResponseDTO = trainerWorkloadMapper.toTrainerWorkloadResponseDTO(save);
+        trainerWorkloadSummaryService.produce(workloadResponseDTO.getTrainerUsername(), year, month);
+
+        return workloadResponseDTO;
     }
 
     @Transactional(rollbackFor = Exception.class)
     public TrainerWorkloadResponseDTO actionOnDELETE(TrainerWorkloadRequestDTO trainerWorkloadRequestDTO) {
 
         LocalDate trainingDate = trainerWorkloadRequestDTO.getTrainingDate();
-        int year =  trainingDate.getYear();
+        int year = trainingDate.getYear();
         int month = trainingDate.getMonthValue();
 
         Optional<TrainerWorkload> trainerWorkload = trainerWorkloadRepository.findTrainerWorkloadByTrainerUsernameAndTrainingDate(
@@ -81,9 +96,14 @@ public class TrainerWorkloadServiceImpl implements TrainerWorkloadService {
         return trainerWorkload.map(workload -> {
             int updatedDuration = workload.getTrainingDuration() - trainerWorkloadRequestDTO.getTrainingDuration();
             workload.setTrainingDuration(updatedDuration);
-            return trainerWorkloadMapper.toTrainerWorkloadResponseDTO(workload);
+            TrainerWorkloadResponseDTO workloadResponseDTO = trainerWorkloadMapper.toTrainerWorkloadResponseDTO(workload);
+
+            trainerWorkloadSummaryService.produce(workloadResponseDTO.getTrainerUsername(), year, month);
+
+            return workloadResponseDTO;
         }).orElseThrow(() ->
                 new TrainerWorkloadNotFoundException("Trainer workload on year [" + year + "] and month [" + month + "] not found")
         );
     }
+
 }

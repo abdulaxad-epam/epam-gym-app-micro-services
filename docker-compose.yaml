@@ -10,7 +10,7 @@ services:
     networks:
       - bridge-network
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL","pg_isready -U abdulaxad -d main-service" ]
       retries: 3
@@ -24,11 +24,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
-      trainer-workload-service:
-        condition: service_healthy
-      eureka-service:
-        condition: service_healthy
     ports:
       - '8080:8080'
     networks:
@@ -39,6 +34,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA_INSTANCE_HOSTNAME: eureka-service
       EUREKA_INSTANCE_PREFER-IP-ADDRESS: true
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka/
+      SPRING_ACTIVEMQ_BROKER-URL: tcp://messaging-service:61616
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
       interval: 10s
@@ -49,9 +46,6 @@ services:
   trainer-workload-service:
     build:
       context: ./epam-gym-app-trainer-workload-service
-    depends_on:
-      eureka-service:
-        condition: service_healthy
     ports:
       - '8081:8081'
     networks:
@@ -59,6 +53,8 @@ services:
     environment:
       EUREKA_INSTANCE_HOSTNAME: eureka-service
       EUREKA_INSTANCE_PREFER-IP-ADDRESS: true
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka/
+      SPRING_ACTIVEMQ_BROKER-URL: tcp://messaging-service:61616
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
       interval: 10s
@@ -75,6 +71,7 @@ services:
       - bridge-network
     environment:
       EUREKA_INSTANCE_HOSTNAME: eureka-service
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka/
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
       interval: 10s
@@ -82,10 +79,27 @@ services:
       retries: 5
       start_period: 30s
 
+  messaging-service:
+    image: rmohr/activemq:5.15.6
+    platform: linux/amd64
+    ports:
+      - '61616:61616'
+      - '8161:8161'
+    environment:
+      USERNAME: admin
+      PASSWORD: admin
+      ACTIVEMQ_BROKER_NAME: active-mq-broker
+    volumes:
+      - activemq_data:/opt/activemq/data
+    networks:
+      - bridge-network
+
 networks:
   bridge-network:
     driver: bridge
 
 volumes:
-  postgres:
+  postgres_data:
+    driver: local
+  activemq_data:
     driver: local

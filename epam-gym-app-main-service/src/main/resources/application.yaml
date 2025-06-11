@@ -3,7 +3,17 @@ spring:
     name: epam-gym-app-main-service
   profiles:
     active: dev
-management:
+  activemq:
+    user: admin
+    password: admin
+    packages:
+      trusted:
+        - java.lang
+        - org.springframework.remoting.support
+        - epam/client/dto/*
+        - epam/dto/*
+    broker-url: tcp://localhost:61616
+    trainer-workload-queue: trainer.workload.queue
   endpoints:
     web:
       exposure:
@@ -21,6 +31,7 @@ management:
         http:
           server:
             requests: 0.5, 0.9, 0.95, 0.99, 0.999
+
 eureka:
   instance:
     hostname: localhost
@@ -28,7 +39,9 @@ eureka:
     instance-id: ${spring.application.name}
   client:
     serviceUrl:
-      defaultZone: http://eureka-service:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
 training:
   service:
     name: epam-gym-app-trainer-workload-service
+
+

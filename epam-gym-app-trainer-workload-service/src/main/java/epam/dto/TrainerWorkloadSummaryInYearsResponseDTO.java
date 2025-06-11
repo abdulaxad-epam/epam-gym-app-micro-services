@@ -18,3 +18,4 @@ public class TrainerWorkloadSummaryInYearsResponseDTO implements Serializable {
     private String year;
     private List<TrainerWorkloadSummaryInMonthsResponseDTO> workloadSummaryInMonths;
 }
+

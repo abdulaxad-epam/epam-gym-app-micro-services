@@ -9,9 +9,8 @@ group = 'epam'
 version = '1.0-0'
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 ext {
@@ -28,6 +27,7 @@ ext {
     aspectjVersion = "1.9.19"
     hoverflyVersion = "0.19.1"
     wiremockVersion = "3.9.1"
+    activeMQVersion = "6.1.6"
 }
 
 repositories {
@@ -50,6 +50,7 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-circuitbreaker-resilience4j'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-activemq'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: jjwtVersion
     implementation group: 'org.aspectj', name: 'aspectjweaver', version: aspectjVersion
     implementation group: 'com.h2database', name: 'h2'

@@ -25,5 +25,6 @@ public class TrainerWorkloadSummaryResponseDTO implements Serializable {
 
     private Boolean status;
 
+
     private List<TrainerWorkloadSummaryInYearsResponseDTO> workloadSummaryInYears;
 }

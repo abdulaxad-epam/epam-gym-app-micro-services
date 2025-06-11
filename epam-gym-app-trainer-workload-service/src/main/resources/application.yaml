@@ -7,6 +7,17 @@ spring:
     jpa:
       repositories:
         enabled: true
+  activemq:
+    user: admin
+    password: admin
+    packages:
+      trusted:
+        - java.lang
+        - org.springframework.remoting.support
+        - epam/client/dto/*
+        - epam/dto/*
+    broker-url: tcp://localhost:61616
+    trainer-workload-summary-queue: trainer.workload.summary.queue
 
 eureka:
   instance:
@@ -15,6 +26,6 @@ eureka:
     instance-id: ${spring.application.name}
   client:
     serviceUrl:
-      defaultZone: http://eureka-service:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
 server:
   port: 8081

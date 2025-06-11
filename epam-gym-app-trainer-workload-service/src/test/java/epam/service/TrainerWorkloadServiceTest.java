@@ -3,6 +3,7 @@ package epam.service;
 import epam.dto.TrainerWorkloadRequestDTO;
 import epam.dto.TrainerWorkloadResponseDTO;
 import epam.entity.TrainerWorkload;
+import epam.enums.ActionType;
 import epam.exception.TrainerWorkloadNotFoundException;
 import epam.mapper.TrainerWorkloadMapper;
 import epam.repostiory.TrainerWorkloadRepository;
@@ -15,142 +16,283 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TrainerWorkloadServiceTest {
 
     @Mock
-    private TrainerWorkloadRepository repository;
+    private TrainerWorkloadRepository trainerWorkloadRepository;
 
     @Mock
-    private TrainerWorkloadMapper mapper;
+    private TrainerWorkloadMapper trainerWorkloadMapper;
+
+    @Mock
+    private TrainerWorkloadSummaryService trainerWorkloadSummaryService;
 
     @InjectMocks
-    private TrainerWorkloadServiceImpl service;
+    private TrainerWorkloadServiceImpl trainerWorkloadService;
 
-    private TrainerWorkload workload;
-    private TrainerWorkloadRequestDTO requestDTO;
-    private TrainerWorkloadResponseDTO responseDTO;
+    private TrainerWorkloadRequestDTO addRequestDTO;
+    private TrainerWorkloadRequestDTO deleteRequestDTO;
+    private TrainerWorkload existingTrainerWorkload;
+    private TrainerWorkload newTrainerWorkload;
+    private TrainerWorkloadResponseDTO expectedResponseDTO;
 
     @BeforeEach
     void setUp() {
-        workload = new TrainerWorkload();
-        workload.setTrainerUsername("trainer1");
-        workload.setTrainingDate(LocalDate.of(2025, 3, 1));
-        workload.setTrainingDuration(5);
+        addRequestDTO = TrainerWorkloadRequestDTO.builder()
+                .trainerUsername("john.doe")
+                .trainerFirstName("John")
+                .trainerLastName("Doe")
+                .isActive(true)
+                .trainingDate(LocalDate.of(2024, 6, 15))
+                .trainingDuration(60)
+                .actionType(ActionType.ADD.name())
+                .build();
 
-        requestDTO = new TrainerWorkloadRequestDTO();
-        requestDTO.setTrainerUsername("trainer1");
-        requestDTO.setTrainingDate(LocalDate.of(2025, 3, 10));
-        requestDTO.setTrainingDuration(3);
+        deleteRequestDTO = TrainerWorkloadRequestDTO.builder()
+                .trainerUsername("john.doe")
+                .trainerFirstName("John")
+                .trainerLastName("Doe")
+                .isActive(true)
+                .trainingDate(LocalDate.of(2024, 6, 15))
+                .trainingDuration(30)
+                .actionType(ActionType.DELETE.name())
+                .build();
 
-        responseDTO = new TrainerWorkloadResponseDTO();
-        responseDTO.setTrainerUsername("trainer1");
-        responseDTO.setTrainingDuration(8); // expected sum
+        existingTrainerWorkload = TrainerWorkload.builder()
+                .trainerWorkloadId(UUID.randomUUID())
+                .trainerUsername("john.doe")
+                .trainerFirstName("John")
+                .trainerLastName("Doe")
+                .isActive(true)
+                .trainingDate(LocalDate.of(2024, 6, 1))
+                .trainingDuration(120)
+                .build();
+
+        newTrainerWorkload = TrainerWorkload.builder()
+                .trainerUsername("john.doe")
+                .trainerFirstName("John")
+                .trainerLastName("Doe")
+                .isActive(true)
+                .trainingDate(LocalDate.of(2024, 6, 1))
+                .trainingDuration(60)
+                .build();
+
+        expectedResponseDTO = TrainerWorkloadResponseDTO.builder()
+                .trainerUsername("john.doe")
+                .trainerFirstName("John")
+                .trainerLastName("Doe")
+                .trainingDate(LocalDate.of(2024, 6, 1))
+                .trainingDuration(180)
+                .build();
     }
 
     @Test
-    void testGetTrainerWorkload_WithYearAndMonth() {
-        when(repository.findTrainerWorkloadsByTrainerUsernameAndTrainingDate("trainer1", LocalDate.of(2025, 3, 1)))
-                .thenReturn(List.of(workload));
+    void testActionOnADD_existingWorkload() {
+        when(trainerWorkloadRepository.findTrainerWorkloadByTrainerUsernameAndTrainingDate(
+                eq(addRequestDTO.getTrainerUsername()), eq(LocalDate.of(2024, 6, 1))))
+                .thenReturn(Optional.of(existingTrainerWorkload));
 
-        List<TrainerWorkload> result = service.getTrainerWorkload("trainer1", 2025, 3);
-        assertEquals(1, result.size());
-        assertEquals("trainer1", result.get(0).getTrainerUsername());
+        when(trainerWorkloadMapper.toTrainerWorkloadResponseDTO(any(TrainerWorkload.class)))
+                .thenReturn(expectedResponseDTO);
+
+        TrainerWorkloadResponseDTO result = trainerWorkloadService.actionOnADD(addRequestDTO);
+
+        assertEquals(180, existingTrainerWorkload.getTrainingDuration());
+
+        // Verify repository interaction (no save, just find)
+        verify(trainerWorkloadRepository, times(1)).findTrainerWorkloadByTrainerUsernameAndTrainingDate(
+                eq(addRequestDTO.getTrainerUsername()), eq(LocalDate.of(2024, 6, 1)));
+        verify(trainerWorkloadRepository, never()).save(any(TrainerWorkload.class)); // Should not save a new one
+
+        // Verify mapper interaction
+        verify(trainerWorkloadMapper, times(1)).toTrainerWorkloadResponseDTO(existingTrainerWorkload);
+
+        // Verify summary service is called
+        verify(trainerWorkloadSummaryService, times(1)).produce(
+                eq(addRequestDTO.getTrainerUsername()), eq(2024), eq(6));
+
+        // Verify response DTO matches
+        assertEquals(expectedResponseDTO, result);
     }
 
     @Test
-    void testGetTrainerWorkload_WithoutYear() {
-        when(repository.findTrainerWorkloadsByTrainerUsername("trainer1")).thenReturn(List.of(workload));
-        List<TrainerWorkload> result = service.getTrainerWorkload("trainer1", null, 3);
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void testActionOn_AddDelegation() {
-        requestDTO.setActionType("ADD");
-        TrainerWorkloadServiceImpl spyService = spy(service);
-
-        doReturn(responseDTO).when(spyService).actionOnADD(requestDTO);
-        TrainerWorkloadResponseDTO result = spyService.actionOn(requestDTO);
-
-        assertEquals("trainer1", result.getTrainerUsername());
-    }
-
-    @Test
-    void testActionOn_DeleteDelegation() {
-        requestDTO.setActionType("DELETE");
-        TrainerWorkloadServiceImpl spyService = spy(service);
-
-        doReturn(responseDTO).when(spyService).actionOnDELETE(requestDTO);
-        TrainerWorkloadResponseDTO result = spyService.actionOn(requestDTO);
-
-        assertEquals("trainer1", result.getTrainerUsername());
-    }
-
-    @Test
-    void testActionOnADD_WhenExistingWorkloadPresent() {
-        when(repository.findTrainerWorkloadByTrainerUsernameAndTrainingDate("trainer1", LocalDate.of(2025, 3, 1)))
-                .thenReturn(Optional.of(workload));
-
-        workload.setTrainingDuration(8);
-        when(mapper.toTrainerWorkloadResponseDTO(workload)).thenReturn(responseDTO);
-
-        TrainerWorkloadResponseDTO result = service.actionOnADD(requestDTO);
-
-        assertEquals(8, result.getTrainingDuration());
-        verify(repository, never()).save(any());
-    }
-
-    @Test
-    void testActionOnADD_WhenNoExistingWorkload() {
-        when(repository.findTrainerWorkloadByTrainerUsernameAndTrainingDate("trainer1", LocalDate.of(2025, 3, 1)))
+    void testActionOnADD_newWorkload() {
+        // Mock repository to return empty optional (no existing workload)
+        when(trainerWorkloadRepository.findTrainerWorkloadByTrainerUsernameAndTrainingDate(
+                eq(addRequestDTO.getTrainerUsername()), eq(LocalDate.of(2024, 6, 1))))
                 .thenReturn(Optional.empty());
 
-        TrainerWorkload mappedEntity = new TrainerWorkload();
-        mappedEntity.setTrainingDate(LocalDate.of(2025, 3, 1));
-        mappedEntity.setTrainingDuration(3);
+        // Mock mapper to convert request DTO to entity and entity to response DTO
+        when(trainerWorkloadMapper.toTrainerWorkload(addRequestDTO)).thenReturn(newTrainerWorkload);
+        when(trainerWorkloadRepository.save(newTrainerWorkload)).thenReturn(newTrainerWorkload); // Simulate save
+        when(trainerWorkloadMapper.toTrainerWorkloadResponseDTO(newTrainerWorkload)).thenReturn(expectedResponseDTO);
 
-        when(mapper.toTrainerWorkload(requestDTO)).thenReturn(mappedEntity);
-        when(repository.save(mappedEntity)).thenReturn(mappedEntity);
-        when(mapper.toTrainerWorkloadResponseDTO(mappedEntity)).thenReturn(responseDTO);
 
-        TrainerWorkloadResponseDTO result = service.actionOnADD(requestDTO);
+        // Adjust expectedResponseDTO for this scenario (new workload will have duration of addRequestDTO)
+        TrainerWorkloadResponseDTO newWorkloadExpectedResponse = TrainerWorkloadResponseDTO.builder()
+                .trainerUsername("john.doe")
+                .trainerFirstName("John")
+                .trainerLastName("Doe")
+                .trainingDate(LocalDate.of(2024, 6, 1))
+                .trainingDuration(60) // Initial duration from DTO
+                .build();
+        when(trainerWorkloadMapper.toTrainerWorkloadResponseDTO(newTrainerWorkload)).thenReturn(newWorkloadExpectedResponse);
 
-        assertEquals("trainer1", result.getTrainerUsername());
-        verify(repository).save(mappedEntity);
+
+        // When actionOnADD is called
+        TrainerWorkloadResponseDTO result = trainerWorkloadService.actionOnADD(addRequestDTO);
+
+        // Verify repository interactions (find and save)
+        verify(trainerWorkloadRepository, times(1)).findTrainerWorkloadByTrainerUsernameAndTrainingDate(
+                eq(addRequestDTO.getTrainerUsername()), eq(LocalDate.of(2024, 6, 1)));
+        verify(trainerWorkloadRepository, times(1)).save(newTrainerWorkload);
+
+        // Verify mapper interactions
+        verify(trainerWorkloadMapper, times(1)).toTrainerWorkload(addRequestDTO);
+        verify(trainerWorkloadMapper, times(1)).toTrainerWorkloadResponseDTO(newTrainerWorkload);
+
+        // Verify summary service is called
+        verify(trainerWorkloadSummaryService, times(1)).produce(
+                eq(addRequestDTO.getTrainerUsername()), eq(2024), eq(6));
+
+        // Verify response DTO matches
+        assertEquals(newWorkloadExpectedResponse, result);
+        assertEquals(LocalDate.of(2024, 6, 1), addRequestDTO.getTrainingDate()); // Ensure DTO's date is set to start of month
     }
 
     @Test
-    void testActionOnDELETE_WhenWorkloadExists() {
-        when(repository.findTrainerWorkloadByTrainerUsernameAndTrainingDate("trainer1", LocalDate.of(2025, 3, 1)))
-                .thenReturn(Optional.of(workload));
+    void testActionOnDELETE_existingWorkload() {
+        // Mock repository to return an existing workload
+        when(trainerWorkloadRepository.findTrainerWorkloadByTrainerUsernameAndTrainingDate(
+                eq(deleteRequestDTO.getTrainerUsername()), eq(LocalDate.of(2024, 6, 1))))
+                .thenReturn(Optional.of(existingTrainerWorkload));
 
-        workload.setTrainingDuration(2);
-        when(mapper.toTrainerWorkloadResponseDTO(workload)).thenReturn(responseDTO);
+        // Configure expected response after deletion
+        TrainerWorkloadResponseDTO deleteExpectedResponse = TrainerWorkloadResponseDTO.builder()
+                .trainerUsername("john.doe")
+                .trainerFirstName("John")
+                .trainerLastName("Doe")
+                .trainingDate(LocalDate.of(2024, 6, 1))
+                .trainingDuration(90) // 120 - 30
+                .build();
+        when(trainerWorkloadMapper.toTrainerWorkloadResponseDTO(any(TrainerWorkload.class)))
+                .thenReturn(deleteExpectedResponse);
 
-        TrainerWorkloadResponseDTO result = service.actionOnDELETE(requestDTO);
+        // When actionOnDELETE is called
+        TrainerWorkloadResponseDTO result = trainerWorkloadService.actionOnDELETE(deleteRequestDTO);
 
-        assertEquals("trainer1", result.getTrainerUsername());
+        // Then verify the workload duration is updated
+        assertEquals(90, existingTrainerWorkload.getTrainingDuration()); // 120 - 30
+
+        // Verify repository interaction (only find)
+        verify(trainerWorkloadRepository, times(1)).findTrainerWorkloadByTrainerUsernameAndTrainingDate(
+                eq(deleteRequestDTO.getTrainerUsername()), eq(LocalDate.of(2024, 6, 1)));
+        verify(trainerWorkloadRepository, never()).save(any(TrainerWorkload.class)); // Should not save a new one
+
+        // Verify mapper interaction
+        verify(trainerWorkloadMapper, times(1)).toTrainerWorkloadResponseDTO(existingTrainerWorkload);
+
+        // Verify summary service is called
+        verify(trainerWorkloadSummaryService, times(1)).produce(
+                eq(deleteRequestDTO.getTrainerUsername()), eq(2024), eq(6));
+
+        // Verify response DTO matches
+        assertEquals(deleteExpectedResponse, result);
     }
 
     @Test
-    void testActionOnDELETE_WhenWorkloadNotFound() {
-        when(repository.findTrainerWorkloadByTrainerUsernameAndTrainingDate("trainer1", LocalDate.of(2025, 3, 1)))
+    void testActionOnDELETE_workloadNotFound() {
+        // Mock repository to return empty optional (no existing workload)
+        when(trainerWorkloadRepository.findTrainerWorkloadByTrainerUsernameAndTrainingDate(
+                eq(deleteRequestDTO.getTrainerUsername()), eq(LocalDate.of(2024, 6, 1))))
                 .thenReturn(Optional.empty());
 
-        assertThrows(TrainerWorkloadNotFoundException.class, () ->
-                service.actionOnDELETE(requestDTO));
+        // When actionOnDELETE is called, then expect TrainerWorkloadNotFoundException
+        TrainerWorkloadNotFoundException thrown = assertThrows(TrainerWorkloadNotFoundException.class, () ->
+                trainerWorkloadService.actionOnDELETE(deleteRequestDTO)
+        );
+
+        // Verify exception message
+        assertEquals("Trainer workload on year [2024] and month [6] not found", thrown.getMessage());
+
+        // Verify repository interaction (only find)
+        verify(trainerWorkloadRepository, times(1)).findTrainerWorkloadByTrainerUsernameAndTrainingDate(
+                eq(deleteRequestDTO.getTrainerUsername()), eq(LocalDate.of(2024, 6, 1)));
+
+        // Verify no other interactions
+        verifyNoInteractions(trainerWorkloadMapper);
+        verifyNoInteractions(trainerWorkloadSummaryService);
+        verify(trainerWorkloadRepository, never()).save(any(TrainerWorkload.class));
+    }
+
+    @Test
+    void testActionOn_ADD_dispatch() {
+        // Mock service behavior for ADD
+        when(trainerWorkloadRepository.findTrainerWorkloadByTrainerUsernameAndTrainingDate(
+                anyString(), any(LocalDate.class))).thenReturn(Optional.of(existingTrainerWorkload));
+        when(trainerWorkloadMapper.toTrainerWorkloadResponseDTO(any(TrainerWorkload.class)))
+                .thenReturn(expectedResponseDTO);
+
+        // Set action type to ADD
+        addRequestDTO.setActionType(ActionType.ADD.name());
+
+        // When actionOn is called
+        TrainerWorkloadResponseDTO result = trainerWorkloadService.actionOn(addRequestDTO);
+
+        // Verify that actionOnADD was called
+        // Since actionOnADD is a public method within the same class, Mockito can't directly verify calls to it
+        // when it's called internally by a non-mocked @InjectMocks instance.
+        // Instead, we verify the effects of actionOnADD by checking interactions with its dependencies.
+        verify(trainerWorkloadRepository, times(1)).findTrainerWorkloadByTrainerUsernameAndTrainingDate(
+                eq(addRequestDTO.getTrainerUsername()), eq(LocalDate.of(2024, 6, 1)));
+        verify(trainerWorkloadMapper, times(1)).toTrainerWorkloadResponseDTO(any(TrainerWorkload.class));
+        verify(trainerWorkloadSummaryService, times(1)).produce(
+                eq(addRequestDTO.getTrainerUsername()), eq(2024), eq(6));
+        assertEquals(expectedResponseDTO, result);
+    }
+
+    @Test
+    void testActionOn_DELETE_dispatch() {
+        // Mock service behavior for DELETE
+        when(trainerWorkloadRepository.findTrainerWorkloadByTrainerUsernameAndTrainingDate(
+                anyString(), any(LocalDate.class))).thenReturn(Optional.of(existingTrainerWorkload));
+        TrainerWorkloadResponseDTO deleteExpectedResponse = TrainerWorkloadResponseDTO.builder()
+                .trainerUsername("john.doe")
+                .trainerFirstName("John")
+                .trainerLastName("Doe")
+                .trainingDate(LocalDate.of(2024, 6, 1))
+                .trainingDuration(90) // 120 - 30
+                .build();
+        when(trainerWorkloadMapper.toTrainerWorkloadResponseDTO(any(TrainerWorkload.class)))
+                .thenReturn(deleteExpectedResponse);
+
+        // Set action type to DELETE
+        deleteRequestDTO.setActionType(ActionType.DELETE.name());
+
+        // When actionOn is called
+        TrainerWorkloadResponseDTO result = trainerWorkloadService.actionOn(deleteRequestDTO);
+
+        // Verify that actionOnDELETE effects occurred
+        verify(trainerWorkloadRepository, times(1)).findTrainerWorkloadByTrainerUsernameAndTrainingDate(
+                eq(deleteRequestDTO.getTrainerUsername()), eq(LocalDate.of(2024, 6, 1)));
+        verify(trainerWorkloadMapper, times(1)).toTrainerWorkloadResponseDTO(any(TrainerWorkload.class));
+        verify(trainerWorkloadSummaryService, times(1)).produce(
+                eq(deleteRequestDTO.getTrainerUsername()), eq(2024), eq(6));
+        assertEquals(deleteExpectedResponse, result);
     }
 }

@@ -1,7 +1,6 @@
 package epam.controller.integration_test;
 
 
-import epam.client.dto.TrainerWorkloadSummaryResponseDTO;
 import epam.client.service.TrainerWorkloadService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -10,23 +9,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class  TrainerWorkloadControllerIntegrationTest {
+public class TrainerWorkloadControllerIntegrationTest {
 
     @Autowired
     private TrainerWorkloadService trainerWorkloadService;

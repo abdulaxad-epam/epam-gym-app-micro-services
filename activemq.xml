@@ -1,0 +1,13 @@
+<broker xmlns="http://activemq.apache.org/schema/core">
+    <destinationPolicy>
+        <policyMap>
+            <policyEntries>
+                <policyEntry queue=">">
+                    <deadLetterStrategy>
+                        <individualDeadLetterStrategy queuePrefix="activemq.service.dlq" useQueueForQueueMessages="true"/>
+                    </deadLetterStrategy>
+                </policyEntry>
+            </policyEntries>
+        </policyMap>
+    </destinationPolicy>
+</broker>

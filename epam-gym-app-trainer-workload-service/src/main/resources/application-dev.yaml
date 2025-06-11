@@ -22,8 +22,8 @@ spring:
 
 application:
   security:
-      internal-token:
-        issuer: main-service
-        audience-id: trainer-workload-service
-        keys:
-          secret-key: "Y3UJgeJVhg5NaWXypLkC4y0ADrUBfGAxhvGdRdULZivfvzuVtv6AzW6NRuEE6DM9xpoWX4hereyvLS2YPiBTZ8xbB3axdM99LhES"
+    internal-token:
+      issuer: main-service
+      audience-id: trainer-workload-service
+      keys:
+        secret-key: "Y3UJgeJVhg5NaWXypLkC4y0ADrUBfGAxhvGdRdULZivfvzuVtv6AzW6NRuEE6DM9xpoWX4hereyvLS2YPiBTZ8xbB3axdM99LhES"
