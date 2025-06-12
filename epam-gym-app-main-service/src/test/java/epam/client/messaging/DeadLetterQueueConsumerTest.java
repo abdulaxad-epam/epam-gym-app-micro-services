@@ -52,7 +52,7 @@ public class DeadLetterQueueConsumerTest {
         testDto = new TrainerWorkloadRequestDTO();
         testDto.setTrainerUsername("test.trainer");
         testDto.setIsActive(true);
-        testDto.setTrainingDuration(60);
+        testDto.setTrainingDurationInMinutes(60);
 
         testPayload = "{\"trainerUsername\":\"test.trainer\",\"isActive\":true,\"trainingDuration\":60}";
 

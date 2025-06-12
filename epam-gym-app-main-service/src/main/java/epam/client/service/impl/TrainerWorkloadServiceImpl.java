@@ -78,7 +78,7 @@ public class TrainerWorkloadServiceImpl implements TrainerWorkloadService {
                 .trainerFirstName(training.getTrainer().getUser().getFirstname())
                 .trainerLastName(training.getTrainer().getUser().getLastname())
                 .trainingDate(training.getTrainingDate().toLocalDate())
-                .trainingDuration(training.getTrainingDuration())
+                .trainingDurationInMinutes(training.getTrainingDuration())
                 .isActive(training.getTrainer().getUser().getIsActive())
                 .actionType(actionType.name())
                 .build();
@@ -90,7 +90,7 @@ public class TrainerWorkloadServiceImpl implements TrainerWorkloadService {
                 .trainerLastName(build.getTrainerLastName())
                 .trainerUsername(build.getTrainerUsername())
                 .trainingDate(build.getTrainingDate())
-                .trainingDuration(build.getTrainingDuration())
+                .trainingDuration(build.getTrainingDurationInMinutes())
                 .build();
     }
 }
