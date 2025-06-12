@@ -24,11 +24,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
-      trainer-workload-service:
-        condition: service_healthy
-      eureka-service:
-        condition: service_healthy
     ports:
       - '8080:8080'
     networks:
@@ -38,6 +33,7 @@ services:
       SPRING_DATASOURCE_USERNAME: abdulaxad
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA_INSTANCE_HOSTNAME: eureka-service
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka/
       EUREKA_INSTANCE_PREFER-IP-ADDRESS: true
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
@@ -49,9 +45,6 @@ services:
   trainer-workload-service:
     build:
       context: ./epam-gym-app-trainer-workload-service
-    depends_on:
-      eureka-service:
-        condition: service_healthy
     ports:
       - '8081:8081'
     networks:
@@ -59,6 +52,7 @@ services:
     environment:
       EUREKA_INSTANCE_HOSTNAME: eureka-service
       EUREKA_INSTANCE_PREFER-IP-ADDRESS: true
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka/
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
       interval: 10s

@@ -39,7 +39,7 @@ public class TrainerWorkloadSummaryControllerTest {
 
         TrainerWorkloadSummaryInMonthsResponseDTO monthSummary = TrainerWorkloadSummaryInMonthsResponseDTO.builder()
                 .month("October")
-                .duration("120")
+                .durationInMinutes("120")
                 .build();
         TrainerWorkloadSummaryInYearsResponseDTO yearSummary = TrainerWorkloadSummaryInYearsResponseDTO.builder()
                 .year("2023")

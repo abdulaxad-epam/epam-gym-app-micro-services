@@ -53,11 +53,11 @@ public class TrainerWorkloadServiceTest {
         requestDTO = new TrainerWorkloadRequestDTO();
         requestDTO.setTrainerUsername("trainer1");
         requestDTO.setTrainingDate(LocalDate.of(2025, 3, 10));
-        requestDTO.setTrainingDuration(3);
+        requestDTO.setTrainingDurationInMinutes(3);
 
         responseDTO = new TrainerWorkloadResponseDTO();
         responseDTO.setTrainerUsername("trainer1");
-        responseDTO.setTrainingDuration(8); // expected sum
+        responseDTO.setTrainingDurationInMinutes(8);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class TrainerWorkloadServiceTest {
 
         TrainerWorkloadResponseDTO result = service.actionOnADD(requestDTO);
 
-        assertEquals(8, result.getTrainingDuration());
+        assertEquals(8, result.getTrainingDurationInMinutes());
         verify(repository, never()).save(any());
     }
 

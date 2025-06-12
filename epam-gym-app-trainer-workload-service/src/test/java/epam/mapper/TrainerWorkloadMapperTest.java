@@ -24,7 +24,7 @@ class TrainerWorkloadMapperTest {
                 .trainerLastName("Doe")
                 .isActive(true)
                 .trainingDate(LocalDate.of(2025, 6, 1))
-                .trainingDuration(90)
+                .trainingDurationInMinutes(90)
                 .build();
 
         TrainerWorkload workload = mapper.toTrainerWorkload(requestDTO);
@@ -54,6 +54,6 @@ class TrainerWorkloadMapperTest {
         assertEquals("Jane", responseDTO.getTrainerFirstName());
         assertEquals("Doe", responseDTO.getTrainerLastName());
         assertEquals(LocalDate.of(2025, 5, 20), responseDTO.getTrainingDate());
-        assertEquals(120, responseDTO.getTrainingDuration());
+        assertEquals(120, responseDTO.getTrainingDurationInMinutes());
     }
 }

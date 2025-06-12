@@ -14,6 +14,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TrainerWorkloadSummaryInMonthsResponseDTO {
     private String month;
-    private String duration;
+    private String durationInMinutes;
 }
 

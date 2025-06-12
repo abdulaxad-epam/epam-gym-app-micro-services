@@ -117,7 +117,7 @@ public class TrainerWorkloadServiceIntegrationTest {
                                 dto.getTrainerFirstName().equals("Test") &&
                                 dto.getTrainerLastName().equals("Trainer") &&
                                 dto.getTrainingDate().equals(LocalDate.of(2023, 1, 15)) &&
-                                dto.getTrainingDuration().equals(90) &&
+                                dto.getTrainingDurationInMinutes().equals(90) &&
                                 dto.getIsActive().equals(true) &&
                                 dto.getActionType().equals(ActionType.ADD.name())
                 ),
@@ -152,7 +152,7 @@ public class TrainerWorkloadServiceIntegrationTest {
                                 dto.getTrainerFirstName().equals("Delete") &&
                                 dto.getTrainerLastName().equals("User") &&
                                 dto.getTrainingDate().equals(LocalDate.of(2023, 2, 10)) &&
-                                dto.getTrainingDuration().equals(60) &&
+                                dto.getTrainingDurationInMinutes().equals(60) &&
                                 dto.getIsActive().equals(true) &&
                                 dto.getActionType().equals(ActionType.DELETE.name())
                 ),

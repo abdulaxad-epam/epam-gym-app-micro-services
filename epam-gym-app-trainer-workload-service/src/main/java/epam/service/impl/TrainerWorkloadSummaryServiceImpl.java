@@ -52,7 +52,7 @@ public class TrainerWorkloadSummaryServiceImpl implements TrainerWorkloadSummary
                                 monthEntry -> {
                                     log.info("Year: {}, Month: {}, Duration {}", yearMapEntry.getKey(), monthEntry.getKey(), monthEntry.getValue());
                                     return TrainerWorkloadSummaryInMonthsResponseDTO.builder().month(String.valueOf(monthEntry.getKey()))
-                                            .duration(String.valueOf(monthEntry.getValue())).build();
+                                            .durationInMinutes(String.valueOf(monthEntry.getValue())).build();
                                 }).toList()
                         ).build()).toList();
 

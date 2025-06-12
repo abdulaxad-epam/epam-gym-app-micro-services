@@ -28,7 +28,7 @@ eureka:
     instance-id: ${spring.application.name}
   client:
     serviceUrl:
-      defaultZone: http://eureka-service:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
 training:
   service:
     name: epam-gym-app-trainer-workload-service

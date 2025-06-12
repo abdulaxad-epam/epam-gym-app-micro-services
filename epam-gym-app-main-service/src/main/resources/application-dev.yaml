@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5434/epam_gym_app_main_service
+    url: jdbc:postgresql://localhost:5432/epam_gym_app_main_service
     driver-class-name: org.postgresql.Driver
-    username: epam
+    username: abdulaxad
     password: root
   jpa:
     hibernate:
