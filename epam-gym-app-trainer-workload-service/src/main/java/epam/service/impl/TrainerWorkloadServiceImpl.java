@@ -63,7 +63,7 @@ public class TrainerWorkloadServiceImpl implements TrainerWorkloadService {
 
         if (trainerWorkload.isPresent()) {
             TrainerWorkload workload = trainerWorkload.get();
-            int updatedDuration = workload.getTrainingDuration() + trainerWorkloadRequestDTO.getTrainingDuration();
+            int updatedDuration = workload.getTrainingDuration() + trainerWorkloadRequestDTO.getTrainingDurationInMinutes();
             workload.setTrainingDuration(updatedDuration);
             TrainerWorkloadResponseDTO workloadResponseDTO = trainerWorkloadMapper.toTrainerWorkloadResponseDTO(workload);
 
@@ -94,7 +94,7 @@ public class TrainerWorkloadServiceImpl implements TrainerWorkloadService {
         );
 
         return trainerWorkload.map(workload -> {
-            int updatedDuration = workload.getTrainingDuration() - trainerWorkloadRequestDTO.getTrainingDuration();
+            int updatedDuration = workload.getTrainingDuration() - trainerWorkloadRequestDTO.getTrainingDurationInMinutes();
             workload.setTrainingDuration(updatedDuration);
             TrainerWorkloadResponseDTO workloadResponseDTO = trainerWorkloadMapper.toTrainerWorkloadResponseDTO(workload);
 

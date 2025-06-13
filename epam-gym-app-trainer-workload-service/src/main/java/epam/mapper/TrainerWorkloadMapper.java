@@ -19,7 +19,7 @@ public interface TrainerWorkloadMapper {
     @Mapping(source = "trainerLastName", target = "trainerLastName")
     @Mapping(source = "isActive", target = "isActive")
     @Mapping(source = "trainingDate", target = "trainingDate")
-    @Mapping(source = "trainingDuration", target = "trainingDuration")
+    @Mapping(source = "trainingDurationInMinutes", target = "trainingDuration")
     TrainerWorkload toTrainerWorkload(TrainerWorkloadRequestDTO trainerWorkloadRequestDTO);
 
 
@@ -28,7 +28,7 @@ public interface TrainerWorkloadMapper {
     @Mapping(source = "trainerFirstName", target = "trainerFirstName")
     @Mapping(source = "trainerLastName", target = "trainerLastName")
     @Mapping(source = "trainingDate", target = "trainingDate")
-    @Mapping(source = "trainingDuration", target = "trainingDuration")
+    @Mapping(source = "trainingDuration", target = "trainingDurationInMinutes")
     TrainerWorkloadResponseDTO toTrainerWorkloadResponseDTO(TrainerWorkload trainerWorkload);
 
 }

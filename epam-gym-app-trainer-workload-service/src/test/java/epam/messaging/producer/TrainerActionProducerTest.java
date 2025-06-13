@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessagePostProcessor;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.mockito.Mockito.eq;

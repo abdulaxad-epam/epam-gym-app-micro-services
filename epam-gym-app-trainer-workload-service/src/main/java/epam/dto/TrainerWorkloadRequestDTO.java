@@ -43,7 +43,7 @@ public class TrainerWorkloadRequestDTO implements Serializable {
     @Min(value = 30, message = "Training duration must be at least 30 minute")
     @Max(value = 480, message = "Training duration cannot exceed 8 hours (480 minutes)")
     @NotNull(message = "Training duration is required")
-    private Integer trainingDuration;
+    private Integer trainingDurationInMinutes;
 
     @Pattern(regexp = "^(ADD|DELETE)$", message = "Action type has to be either ADD or DELETE")
     @NotBlank(message = "Action type is required")

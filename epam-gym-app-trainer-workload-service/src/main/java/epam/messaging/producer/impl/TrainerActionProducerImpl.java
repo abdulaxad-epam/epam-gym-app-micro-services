@@ -2,7 +2,6 @@ package epam.messaging.producer.impl;
 
 import epam.dto.TrainerWorkloadSummaryResponseDTO;
 import epam.messaging.producer.TrainerActionProducer;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;

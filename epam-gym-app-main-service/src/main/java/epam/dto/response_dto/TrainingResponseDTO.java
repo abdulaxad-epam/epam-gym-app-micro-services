@@ -27,7 +27,7 @@ public class TrainingResponseDTO implements Serializable {
 
     private String trainingType;
 
-    private Integer trainingDuration;
+    private Integer trainingDurationInMinutes;
 
     private TraineeResponseDTO trainee;
 

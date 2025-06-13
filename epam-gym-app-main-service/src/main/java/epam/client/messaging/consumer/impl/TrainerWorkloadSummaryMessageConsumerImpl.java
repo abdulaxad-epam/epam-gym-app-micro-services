@@ -1,16 +1,15 @@
 package epam.client.messaging.consumer.impl;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.springframework.jms.annotation.JmsListener;
-import org.springframework.stereotype.Component;
-
 import epam.client.dto.TrainerWorkloadSummaryResponseDTO;
 import epam.client.messaging.consumer.TrainerWorkloadSummaryMessageConsumer;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
@@ -20,7 +19,7 @@ public class TrainerWorkloadSummaryMessageConsumerImpl implements TrainerWorkloa
 
     @Override
     public TrainerWorkloadSummaryResponseDTO getTrainerWorkloadSummary(String trainerUsername, Integer year,
-            Integer month) {
+                                                                       Integer month) {
 
         return trainer_workload_summary_pool.get(trainerUsername).get(year).get(month);
 

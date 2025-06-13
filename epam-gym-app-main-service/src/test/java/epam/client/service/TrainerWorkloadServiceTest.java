@@ -1,7 +1,5 @@
 package epam.client.service;
 
-import epam.client.dto.TrainerWorkloadRequestDTO;
-import epam.client.dto.TrainerWorkloadResponseDTO;
 import epam.client.dto.TrainerWorkloadSummaryResponseDTO;
 import epam.client.messaging.consumer.TrainerWorkloadSummaryMessageConsumer;
 import epam.client.messaging.producer.TrainerMessageProducer;
@@ -10,16 +8,12 @@ import epam.client.service.impl.TrainerWorkloadServiceImpl;
 import epam.entity.Trainer;
 import epam.entity.Training;
 import epam.entity.User;
-import epam.enums.ActionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
-import org.springframework.jms.core.MessagePostProcessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -30,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;

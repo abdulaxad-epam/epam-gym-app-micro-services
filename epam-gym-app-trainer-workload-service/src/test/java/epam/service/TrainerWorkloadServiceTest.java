@@ -59,7 +59,7 @@ public class TrainerWorkloadServiceTest {
                 .trainerLastName("Doe")
                 .isActive(true)
                 .trainingDate(LocalDate.of(2024, 6, 15))
-                .trainingDuration(60)
+                .trainingDurationInMinutes(60)
                 .actionType(ActionType.ADD.name())
                 .build();
 
@@ -69,7 +69,7 @@ public class TrainerWorkloadServiceTest {
                 .trainerLastName("Doe")
                 .isActive(true)
                 .trainingDate(LocalDate.of(2024, 6, 15))
-                .trainingDuration(30)
+                .trainingDurationInMinutes(30)
                 .actionType(ActionType.DELETE.name())
                 .build();
 
@@ -97,7 +97,7 @@ public class TrainerWorkloadServiceTest {
                 .trainerFirstName("John")
                 .trainerLastName("Doe")
                 .trainingDate(LocalDate.of(2024, 6, 1))
-                .trainingDuration(180)
+                .trainingDurationInMinutes(180)
                 .build();
     }
 
@@ -149,7 +149,7 @@ public class TrainerWorkloadServiceTest {
                 .trainerFirstName("John")
                 .trainerLastName("Doe")
                 .trainingDate(LocalDate.of(2024, 6, 1))
-                .trainingDuration(60) // Initial duration from DTO
+                .trainingDurationInMinutes(60) // Initial duration from DTO
                 .build();
         when(trainerWorkloadMapper.toTrainerWorkloadResponseDTO(newTrainerWorkload)).thenReturn(newWorkloadExpectedResponse);
 
@@ -188,7 +188,7 @@ public class TrainerWorkloadServiceTest {
                 .trainerFirstName("John")
                 .trainerLastName("Doe")
                 .trainingDate(LocalDate.of(2024, 6, 1))
-                .trainingDuration(90) // 120 - 30
+                .trainingDurationInMinutes(90) // 120 - 30
                 .build();
         when(trainerWorkloadMapper.toTrainerWorkloadResponseDTO(any(TrainerWorkload.class)))
                 .thenReturn(deleteExpectedResponse);
@@ -276,7 +276,7 @@ public class TrainerWorkloadServiceTest {
                 .trainerFirstName("John")
                 .trainerLastName("Doe")
                 .trainingDate(LocalDate.of(2024, 6, 1))
-                .trainingDuration(90) // 120 - 30
+                .trainingDurationInMinutes(90) // 120 - 30
                 .build();
         when(trainerWorkloadMapper.toTrainerWorkloadResponseDTO(any(TrainerWorkload.class)))
                 .thenReturn(deleteExpectedResponse);

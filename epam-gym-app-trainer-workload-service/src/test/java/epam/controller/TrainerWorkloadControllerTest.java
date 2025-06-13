@@ -52,7 +52,7 @@ public class TrainerWorkloadControllerTest {
                 .trainerFirstName("John")
                 .trainerLastName("Doe")
                 .trainingDate(LocalDate.of(2023, 1, 15))
-                .trainingDuration(60)
+                .trainingDurationInMinutes(60)
                 .isActive(true)
                 .actionType("ADD")
                 .build();
@@ -72,7 +72,7 @@ public class TrainerWorkloadControllerTest {
                 .trainerFirstName("John")
                 .trainerLastName("Doe")
                 .trainingDate(LocalDate.of(2023, 1, 15))
-                .trainingDuration(60)
+                .trainingDurationInMinutes(60)
                 .isActive(true)
                 .actionType("ADD")
                 .build();
@@ -93,7 +93,7 @@ public class TrainerWorkloadControllerTest {
                 .trainerFirstName("John")
                 .trainerLastName("Doe")
                 .trainingDate(LocalDate.of(2023, 1, 15))
-                .trainingDuration(60)
+                .trainingDurationInMinutes(60)
                 .isActive(true)
                 .actionType("ADD")
                 .build();

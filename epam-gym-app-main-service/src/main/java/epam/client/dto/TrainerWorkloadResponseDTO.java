@@ -25,5 +25,5 @@ public class TrainerWorkloadResponseDTO {
 
     private LocalDate trainingDate;
 
-    private Integer trainingDuration;
+    private Integer trainingDurationInMinutes;
 }

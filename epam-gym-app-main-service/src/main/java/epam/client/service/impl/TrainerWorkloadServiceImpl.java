@@ -90,7 +90,7 @@ public class TrainerWorkloadServiceImpl implements TrainerWorkloadService {
                 .trainerLastName(build.getTrainerLastName())
                 .trainerUsername(build.getTrainerUsername())
                 .trainingDate(build.getTrainingDate())
-                .trainingDuration(build.getTrainingDurationInMinutes())
+                .trainingDurationInMinutes(build.getTrainingDurationInMinutes())
                 .build();
     }
 }

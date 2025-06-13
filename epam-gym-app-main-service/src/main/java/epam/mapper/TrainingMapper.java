@@ -21,11 +21,12 @@ public interface TrainingMapper {
     @Mapping(source = "trainer", target = "trainer", qualifiedByName = "toTrainerResponseDTO")
     @Mapping(source = "trainingType.description", target = "trainingType")
     @Mapping(source = "trainingId", target = "trainingId")
+    @Mapping(source = "trainingDuration", target = "trainingDurationInMinutes")
     TrainingResponseDTO toTrainingResponseDTO(Training training);
 
     @Named("toTraining")
     @Mapping(source = "trainingRequestDTO.trainingDate", target = "trainingDate")
-    @Mapping(source = "trainingRequestDTO.trainingDuration", target = "trainingDuration")
+    @Mapping(source = "trainingRequestDTO.trainingDurationInMinutes", target = "trainingDuration")
     @Mapping(source = "trainingRequestDTO.trainingName", target = "trainingName")
     @Mapping(source = "trainingType", target = "trainingType")
     @Mapping(source = "trainer", target = "trainer")
