@@ -1,0 +1,29 @@
+spring:
+  h2:
+    console:
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  datasource:
+    url: jdbc:h2:mem:gym;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: abdulaxad
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: false
+      jakarta.persistence.sql-load-script-source: classpath:database_initializer/data.sql
+    open-in-view: true
+
+application:
+  security:
+    internal-token:
+      issuer: main-service
+      audience-id: trainer-workload-service
+      keys:
+        secret-key: "Y3UJgeJVhg5NaW3UJgeJVhg5NaW"

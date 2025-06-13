@@ -12,7 +12,7 @@ COPY settings.gradle .
 
 COPY src ./src
 
-RUN gradle bootJar -x test
+RUN gradle bootJar
 
 # Stage 2:
 FROM openjdk:17-jdk-slim-bullseye AS run

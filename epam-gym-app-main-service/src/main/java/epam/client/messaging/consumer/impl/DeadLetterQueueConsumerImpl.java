@@ -12,8 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.MessagePostProcessor;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Slf4j
@@ -27,25 +29,39 @@ public class DeadLetterQueueConsumerImpl implements DeadLetterQueueConsumer {
 
     private final ObjectMapper objectMapper;
 
-    public static final String DEADLETTER_QUEUE = "ActiveMQ.DLQ";
+    private static final String DEADLETTER_QUEUE = "ActiveMQ.DLQ";
+
+    private static final Map<String, Integer> DEADLETTER_QUEUE_COUNTER = new ConcurrentHashMap<>();
 
     @JmsListener(destination = DEADLETTER_QUEUE)
-    public void deadLetterConsumer(Message message, @Header(name = "JMSXDeliveryCount", required = false) Integer deliveryCount) {
+    public void deadLetterConsumer(Message message) {
         log.info("DeadLetterQueue consumer called");
+
+
         try {
             if (message instanceof TextMessage textMessage) {
                 String payload = textMessage.getText();
 
                 TrainerWorkloadRequestDTO trainerWorkloadRequestDTO = objectMapper.readValue(payload, TrainerWorkloadRequestDTO.class);
 
-                log.info("Deserialized TrainerWorkloadRequestDTO: {}", trainerWorkloadRequestDTO.toString());
+                Integer deliveryCount = 1;
 
-                if (deliveryCount != null && deliveryCount < 5) {
+                if (DEADLETTER_QUEUE_COUNTER.containsKey(trainerWorkloadRequestDTO.getTrainerUsername())) {
+                    deliveryCount = DEADLETTER_QUEUE_COUNTER.get(trainerWorkloadRequestDTO.getTrainerUsername());
+                    DEADLETTER_QUEUE_COUNTER.put(trainerWorkloadRequestDTO.getTrainerUsername(), ++deliveryCount);
+                } else {
+                    DEADLETTER_QUEUE_COUNTER.put(trainerWorkloadRequestDTO.getTrainerUsername(), 1);
+                }
+
+                log.info("Deserialized TrainerWorkloadRequestDTO: {}", trainerWorkloadRequestDTO);
+
+                if (deliveryCount < 5) {
                     log.info("Retrying to deliver trainerWorkloadRequestDTO: {}", trainerWorkloadRequestDTO);
                     MessagePostProcessor url = propertiesBuilder.buildMessagePropertyOnProduce();
                     trainerMessageProducer.produceOnAction(url, trainerWorkloadRequestDTO);
                 } else {
                     log.error("Unable to deliver trainerWorkloadRequestDTO counts {}: {}", deliveryCount, trainerWorkloadRequestDTO);
+                    DEADLETTER_QUEUE_COUNTER.remove(trainerWorkloadRequestDTO.getTrainerUsername());
                 }
             } else {
                 log.warn("Received non-TextMessage in DLQ: {}", message.getClass().getName());

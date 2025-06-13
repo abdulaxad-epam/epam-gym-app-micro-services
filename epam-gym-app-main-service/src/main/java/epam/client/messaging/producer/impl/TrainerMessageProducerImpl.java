@@ -1,12 +1,10 @@
 package epam.client.messaging.producer.impl;
 
 import epam.client.dto.TrainerWorkloadRequestDTO;
-import epam.client.dto.TrainerWorkloadResponseDTO;
 import epam.client.messaging.producer.TrainerMessageProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessagePostProcessor;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,7 @@ public class TrainerMessageProducerImpl implements TrainerMessageProducer {
     @Transactional(value = "jmsTransactionManager")
     @Override
     public void produceOnAction(MessagePostProcessor url, TrainerWorkloadRequestDTO dto) {
-        log.info("Post training action");
+        log.info("Trainer workload queue is called : {}", dto.toString());
         jmsTemplate.convertAndSend(trainerWorkloadQueue, dto, url);
     }
 }

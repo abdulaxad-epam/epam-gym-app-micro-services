@@ -18,16 +18,28 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jms.core.MessagePostProcessor;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class DeadLetterQueueConsumerTest {
+
+    private static final String DEADLETTER_QUEUE_COUNTER_FIELD = "DEADLETTER_QUEUE_COUNTER";
+    private Map<String, Integer> staticCounterMap;
 
     @Mock
     private TrainerMessageProducer trainerMessageProducer;
@@ -36,107 +48,154 @@ public class DeadLetterQueueConsumerTest {
     @Mock
     private ObjectMapper objectMapper;
     @Mock
-    private TextMessage mockTextMessage;
+    private TextMessage textMessage;
     @Mock
-    private Message mockGenericMessage;
+    private Message otherMessage;
 
     @InjectMocks
     private DeadLetterQueueConsumerImpl deadLetterQueueConsumer;
 
     private TrainerWorkloadRequestDTO testDto;
     private String testPayload;
-    private MessagePostProcessor mockMessagePostProcessor;
 
     @BeforeEach
-    void setUp() throws JsonProcessingException {
-        testDto = new TrainerWorkloadRequestDTO();
-        testDto.setTrainerUsername("test.trainer");
-        testDto.setIsActive(true);
-        testDto.setTrainingDurationInMinutes(60);
+    void setUp() throws NoSuchFieldException, IllegalAccessException, JsonProcessingException, JMSException {
 
-        testPayload = "{\"trainerUsername\":\"test.trainer\",\"isActive\":true,\"trainingDuration\":60}";
+        java.lang.reflect.Field field = DeadLetterQueueConsumerImpl.class.getDeclaredField(DEADLETTER_QUEUE_COUNTER_FIELD);
+        field.setAccessible(true);
+        staticCounterMap = (ConcurrentHashMap<String, Integer>) field.get(null);
+        staticCounterMap.clear();
 
-        mockMessagePostProcessor = mock(MessagePostProcessor.class);
+        testDto = TrainerWorkloadRequestDTO.builder()
+                .trainerUsername("john.doe")
+                .trainerFirstName("John")
+                .trainerLastName("Doe")
+                .isActive(true)
+                .trainingDate(LocalDate.of(2025, 7, 1))
+                .trainingDurationInMinutes(60)
+                .actionType("ADD")
+                .build();
+        testPayload = "{\"trainerUsername\":\"john.doe\", ...}";
 
-        lenient().when(objectMapper.readValue(eq(testPayload), eq(TrainerWorkloadRequestDTO.class))).thenReturn(testDto);
-        lenient().when(propertiesBuilder.buildMessagePropertyOnProduce()).thenReturn(mockMessagePostProcessor);
+        // Common mock behaviors
+        lenient().when(textMessage.getText()).thenReturn(testPayload);
+        lenient().when(objectMapper.readValue(testPayload, TrainerWorkloadRequestDTO.class)).thenReturn(testDto);
+        lenient().when(propertiesBuilder.buildMessagePropertyOnProduce()).thenReturn(mock(MessagePostProcessor.class));
     }
 
     @Test
-    @DisplayName("Should deserialize, log, and retry when deliveryCount is less than 5")
-    void deadLetterConsumer_retrySuccess_deliveryCountLessThan5() throws JMSException, JsonProcessingException {
-        when(mockTextMessage.getText()).thenReturn(testPayload);
+    @DisplayName("Should retry message on first attempt for a trainer")
+    void shouldRetryOnFirstAttempt() {
+        deadLetterQueueConsumer.deadLetterConsumer(textMessage);
 
-        deadLetterQueueConsumer.deadLetterConsumer(mockTextMessage, 3);
+        verify(trainerMessageProducer, times(1)).produceOnAction(any(MessagePostProcessor.class), eq(testDto));
 
-        verify(mockTextMessage).getText();
-        verify(objectMapper).readValue(eq(testPayload), eq(TrainerWorkloadRequestDTO.class));
-        verify(propertiesBuilder).buildMessagePropertyOnProduce();
-        verify(trainerMessageProducer).produceOnAction(eq(mockMessagePostProcessor), eq(testDto));
+        assertEquals(1, staticCounterMap.get(testDto.getTrainerUsername()));
     }
 
     @Test
-    @DisplayName("Should deserialize, log error, and not retry when deliveryCount is 5 or more")
-    void deadLetterConsumer_noRetry_deliveryCountGreaterThanOrEqualTo5() throws JMSException, JsonProcessingException {
-        when(mockTextMessage.getText()).thenReturn(testPayload);
+    @DisplayName("Should retry message on second attempt for the same trainer")
+    void shouldRetryOnSecondAttempt() {
+        staticCounterMap.put(testDto.getTrainerUsername(), 1);
 
-        deadLetterQueueConsumer.deadLetterConsumer(mockTextMessage, 5);
+        deadLetterQueueConsumer.deadLetterConsumer(textMessage);
 
-        verify(mockTextMessage).getText();
-        verify(objectMapper).readValue(eq(testPayload), eq(TrainerWorkloadRequestDTO.class));
-        verifyNoInteractions(propertiesBuilder);
-        verifyNoInteractions(trainerMessageProducer);
+        verify(trainerMessageProducer, times(1)).produceOnAction(any(MessagePostProcessor.class), eq(testDto));
+        assertEquals(2, staticCounterMap.get(testDto.getTrainerUsername()));
     }
 
     @Test
-    @DisplayName("Should deserialize, log error, and not retry when deliveryCount is null")
-    void deadLetterConsumer_noRetry_deliveryCountIsNull() throws JMSException, JsonProcessingException {
-        when(mockTextMessage.getText()).thenReturn(testPayload);
+    @DisplayName("Should retry message on fourth attempt (count 4), the last successful retry")
+    void shouldRetryOnFourthAttempt() {
+        staticCounterMap.put(testDto.getTrainerUsername(), 3);
 
-        deadLetterQueueConsumer.deadLetterConsumer(mockTextMessage, null);
+        deadLetterQueueConsumer.deadLetterConsumer(textMessage);
 
-        verify(mockTextMessage).getText();
-        verify(objectMapper).readValue(eq(testPayload), eq(TrainerWorkloadRequestDTO.class));
-        verifyNoInteractions(propertiesBuilder);
-        verifyNoInteractions(trainerMessageProducer);
+        verify(trainerMessageProducer, times(1)).produceOnAction(any(MessagePostProcessor.class), eq(testDto));
+        assertEquals(4, staticCounterMap.get(testDto.getTrainerUsername()));
     }
 
     @Test
-    @DisplayName("Should log warning when message is not a TextMessage")
-    void deadLetterConsumer_nonTextMessage_logsWarning() {
+    @DisplayName("Should NOT retry message on fifth attempt (count 5), and remove from counter")
+    void shouldNotRetryOnFifthAttemptAndRemove() {
+        staticCounterMap.put(testDto.getTrainerUsername(), 4);
 
-        deadLetterQueueConsumer.deadLetterConsumer(mockGenericMessage, 3);
+        deadLetterQueueConsumer.deadLetterConsumer(textMessage);
 
-        verifyNoInteractions(objectMapper);
-        verifyNoInteractions(propertiesBuilder);
-        verifyNoInteractions(trainerMessageProducer);
+        verify(trainerMessageProducer, never()).produceOnAction(any(MessagePostProcessor.class), any(TrainerWorkloadRequestDTO.class));
+        assertFalse(staticCounterMap.containsKey(testDto.getTrainerUsername()), "Entry should be removed from map");
     }
 
     @Test
-    @DisplayName("Should catch and log JmsException when getting text from message fails")
-    void deadLetterConsumer_jmsExceptionOnGetText_logsError() throws JMSException {
-        doThrow(new JMSException("Simulated JMS Exception during getText")).when(mockTextMessage).getText();
-
-        deadLetterQueueConsumer.deadLetterConsumer(mockTextMessage, 3);
-
-        verify(mockTextMessage).getText();
-        verifyNoInteractions(objectMapper);
-        verifyNoInteractions(propertiesBuilder);
-        verifyNoInteractions(trainerMessageProducer);
+    @DisplayName("Should handle non-TextMessage and log warning")
+    void shouldHandleNonTextMessage() {
+        deadLetterQueueConsumer.deadLetterConsumer(otherMessage);
+        verify(trainerMessageProducer, never()).produceOnAction(any(), any());
     }
 
     @Test
-    @DisplayName("Should catch and log Exception when JSON deserialization fails")
-    void deadLetterConsumer_jsonProcessingException_logsError() throws JMSException, JsonProcessingException {
-        when(mockTextMessage.getText()).thenReturn(testPayload);
-        lenient().doThrow(new JsonProcessingException("Simulated JSON processing error") {
-        }).when(objectMapper).readValue(eq(testPayload), eq(TrainerWorkloadRequestDTO.class));
+    @DisplayName("Should handle JsonProcessingException during deserialization")
+    void shouldHandleJsonProcessingException() throws JsonProcessingException, JMSException {
+        when(objectMapper.readValue(testPayload, TrainerWorkloadRequestDTO.class)).thenThrow(mock(JsonProcessingException.class));
 
-        deadLetterQueueConsumer.deadLetterConsumer(mockTextMessage, 3);
+        deadLetterQueueConsumer.deadLetterConsumer(textMessage);
 
-        verify(mockTextMessage).getText();
-        verify(objectMapper).readValue(eq(testPayload), eq(TrainerWorkloadRequestDTO.class));
-        verifyNoInteractions(propertiesBuilder);
-        verifyNoInteractions(trainerMessageProducer);
+        verify(trainerMessageProducer, never()).produceOnAction(any(), any()); // No retry attempts
+        assertTrue(staticCounterMap.isEmpty(), "Map should be empty or untouched if deserialization fails early");
+    }
+
+    @Test
+    @DisplayName("Should handle generic JMSException during message processing")
+    void shouldHandleJmsException() throws JMSException {
+        when(textMessage.getText()).thenThrow(mock(JMSException.class));
+
+        deadLetterQueueConsumer.deadLetterConsumer(textMessage);
+
+        verify(trainerMessageProducer, never()).produceOnAction(any(), any());
+        assertTrue(staticCounterMap.isEmpty(), "Map should be empty or untouched if JMS exception occurs early");
+    }
+
+    @Test
+    @DisplayName("Should handle other generic Exceptions")
+    void shouldHandleOtherExceptions() throws JsonProcessingException {
+        when(objectMapper.readValue(testPayload, TrainerWorkloadRequestDTO.class)).thenReturn(testDto);
+        when(propertiesBuilder.buildMessagePropertyOnProduce()).thenThrow(new RuntimeException("Simulated unexpected error"));
+
+        deadLetterQueueConsumer.deadLetterConsumer(textMessage);
+
+        assertEquals(1, staticCounterMap.get(testDto.getTrainerUsername()));
+        verify(trainerMessageProducer, never()).produceOnAction(any(), any());
+    }
+
+
+    @Test
+    @DisplayName("Should demonstrate shared counter flaw for different trainers")
+    void shouldDemonstrateSharedCounterFlaw() {
+        TrainerWorkloadRequestDTO trainer1 = testDto;
+        TrainerWorkloadRequestDTO trainer2 = TrainerWorkloadRequestDTO.builder().trainerUsername("jane.doe").build();
+
+        staticCounterMap.put(trainer1.getTrainerUsername(), 3);
+        deadLetterQueueConsumer.deadLetterConsumer(textMessage);
+        verify(trainerMessageProducer, times(1)).produceOnAction(any(), eq(trainer1));
+
+        try {
+            when(objectMapper.readValue(testPayload, TrainerWorkloadRequestDTO.class)).thenReturn(trainer2);
+        } catch (JsonProcessingException e) {
+            fail("Should not throw JsonProcessingException");
+        }
+
+        deadLetterQueueConsumer.deadLetterConsumer(textMessage);
+        verify(trainerMessageProducer, times(1)).produceOnAction(any(), eq(trainer2));
+
+        try {
+            when(objectMapper.readValue(testPayload, TrainerWorkloadRequestDTO.class)).thenReturn(trainer1);
+        } catch (JsonProcessingException e) {
+            fail("Should not throw JsonProcessingException");
+        }
+        deadLetterQueueConsumer.deadLetterConsumer(textMessage);
+        verify(trainerMessageProducer, times(1)).produceOnAction(any(), eq(trainer1));
+        assertFalse(staticCounterMap.containsKey(trainer1.getTrainerUsername()), "John Doe's entry should be removed");
+
+        assertEquals(1, staticCounterMap.get(trainer2.getTrainerUsername()));
     }
 }

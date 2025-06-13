@@ -1,10 +1,11 @@
 package epam.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.RedeliveryPolicy;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQConnectionFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -18,12 +19,6 @@ import org.springframework.jms.support.converter.MessageType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @EnableTransactionManagement
@@ -68,30 +63,13 @@ public class ActiveMQConfig {
     }
 
     @Bean
-    public ActiveMQConnectionFactoryCustomizer customizeActiveMQConnectionFactory() {
-        return connectionFactory -> {
-            // Create a RedeliveryPolicy instance
-            RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
-
-            // Configure the redelivery settings
-            redeliveryPolicy.setInitialRedeliveryDelay(1000L); // First retry after 1 second
-            redeliveryPolicy.setRedeliveryDelay(5000L);       // Subsequent retries after 5 seconds
-            redeliveryPolicy.setUseExponentialBackOff(true);  // Enable exponential backoff
-            redeliveryPolicy.setBackOffMultiplier(2.0);      // Double the delay each time
-            redeliveryPolicy.setMaximumRedeliveryDelay(60000L); // Max delay of 60 seconds
-            redeliveryPolicy.setMaximumRedeliveries(4);       // Total 5 attempts (initial + 4 retries)
-            connectionFactory.setRedeliveryPolicy(redeliveryPolicy);
-            connectionFactory.setTrustAllPackages(true);
-        };
-    }
-
-    @Bean
     public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
         DefaultJmsListenerContainerFactory defaultJmsListenerContainerFactory = new DefaultJmsListenerContainerFactory();
         defaultJmsListenerContainerFactory.setConnectionFactory(platformTransactionManager());
         defaultJmsListenerContainerFactory.setMessageConverter(jacksonJmsMessageConverter());
         defaultJmsListenerContainerFactory.setTransactionManager(jmsTransactionManager());
-        defaultJmsListenerContainerFactory.setErrorHandler(e -> log.warn("Transactional error: "+ e));
+        defaultJmsListenerContainerFactory.setSessionTransacted(true);
+        defaultJmsListenerContainerFactory.setErrorHandler(e -> log.warn("Transactional error: {}", e.getMessage()));
 
         return defaultJmsListenerContainerFactory;
     }
