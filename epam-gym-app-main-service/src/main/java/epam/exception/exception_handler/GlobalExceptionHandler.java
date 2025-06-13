@@ -1,17 +1,7 @@
 package epam.exception.exception_handler;
 
 import epam.aop.Logging;
-import epam.exception.exception.InvalidTokenType;
-import epam.exception.exception.TraineeHasAssignedBeforeException;
-import epam.exception.exception.TraineeHasNotAssignedBeforeException;
-import epam.exception.exception.TraineeNotFoundException;
-import epam.exception.exception.TrainerNotFoundException;
-import epam.exception.exception.TrainerWorkloadIsUnavailableException;
-import epam.exception.exception.TrainingNotFoundException;
-import epam.exception.exception.TrainingTypeNotFoundException;
-import epam.exception.exception.UserNotAuthenticated;
-import epam.exception.exception.UserNotFoundException;
-import epam.exception.exception.UsernameGenerateException;
+import epam.exception.exception.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

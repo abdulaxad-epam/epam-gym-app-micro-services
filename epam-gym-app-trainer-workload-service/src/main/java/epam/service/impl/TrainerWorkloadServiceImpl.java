@@ -71,7 +71,7 @@ public class TrainerWorkloadServiceImpl implements TrainerWorkloadService {
     public TrainerWorkloadResponseDTO actionOnDELETE(TrainerWorkloadRequestDTO trainerWorkloadRequestDTO) {
 
         LocalDate trainingDate = trainerWorkloadRequestDTO.getTrainingDate();
-        int year =  trainingDate.getYear();
+        int year = trainingDate.getYear();
         int month = trainingDate.getMonthValue();
 
         Optional<TrainerWorkload> trainerWorkload = trainerWorkloadRepository.findTrainerWorkloadByTrainerUsernameAndTrainingDate(

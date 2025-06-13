@@ -16,14 +16,28 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        show_sql: false
       jakarta.persistence.sql-load-script-source: classpath:database_initializer/data.sql
     open-in-view: true
 
+  data:
+
+    jpa:
+      repositories:
+        enabled: true
+server:
+  port: 8080
+
 application:
   security:
+    jwt-token:
+      access-expiration: 3600000
+      refresh-expiration: 15778800000  #  6 months
+      keys:
+        secret-key: "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0"
     internal-token:
-      issuer: main-service
-      audience-id: trainer-workload-service
+      token-expiration: 1500
       keys:
         secret-key: "Y3UJgeJVhg5NaWXypLkC4y0ADrUBfGAxhvGdRdULZivfvzuVtv6AzW6NRuEE6DM9xpoWX4hereyvLS2YPiBTZ8xbB3axdM99LhES"
+      subject-id: main-service
+      audience-id: trainer-workload-service
+      issuer-id: main-service
