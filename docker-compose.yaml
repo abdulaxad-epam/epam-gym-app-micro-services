@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:17-alpine
+    container_name: db
     ports:
       - '5432:5432'
     environment:
@@ -21,6 +22,7 @@ services:
   main-service:
     build:
       context: ./epam-gym-app-main-service
+    container_name: main-service
     depends_on:
       db:
         condition: service_healthy
@@ -46,6 +48,7 @@ services:
   trainer-workload-service:
     build:
       context: ./epam-gym-app-trainer-workload-service
+    container_name: trainer-workload-service
     ports:
       - '8081:8081'
     networks:
@@ -65,6 +68,7 @@ services:
   eureka-service:
     build:
       context: ./epam-gym-app-eureka-service
+    container_name: eureka-service
     ports:
       - '8761:8761'
     networks:
@@ -81,6 +85,7 @@ services:
 
   messaging-service:
     image: rmohr/activemq:5.15.6
+    container_name: messaging-service
     platform: linux/amd64
     ports:
       - '61616:61616'
@@ -94,6 +99,34 @@ services:
     networks:
       - bridge-network
 
+  prometheus:
+    image: prom/prometheus:v3.4.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+    networks:
+      - bridge-network
+  grafana:
+    image: grafana/grafana:12.0.0
+    container_name: grafana
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    environment:
+       GF_SECURITY_ADMIN_USER: admin
+       GF_SECURITY_ADMIN_PASSWORD: admin
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      -  grafana-storage:/var/lib/grafana
+    networks:
+      - bridge-network
+
+
+
 networks:
   bridge-network:
     driver: bridge
@@ -102,4 +135,6 @@ volumes:
   postgres_data:
     driver: local
   activemq_data:
+    driver: local
+  grafana-storage:
     driver: local

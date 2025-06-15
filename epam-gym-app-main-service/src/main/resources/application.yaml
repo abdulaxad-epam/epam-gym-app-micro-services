@@ -44,4 +44,8 @@ training:
   service:
     name: epam-gym-app-trainer-workload-service
 
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ "prometheus" ]

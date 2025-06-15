@@ -49,6 +49,7 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: jjwtVersion
     implementation group: 'org.mapstruct', name: 'mapstruct', version: mapstructVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-activemq'
+    runtimeOnly group: 'io.micrometer', name: 'micrometer-registry-prometheus'
     // CompileOnly dependencies
     compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
