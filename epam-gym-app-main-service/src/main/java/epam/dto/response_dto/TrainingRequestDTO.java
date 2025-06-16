@@ -24,6 +24,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class TrainingRequestDTO implements Serializable {
 
+    @NotBlank(message = "Trainer username is required")
+    private String trainerUsername;
+
     @NotBlank(message = "Trainee username is required")
     private String traineeUsername;
 

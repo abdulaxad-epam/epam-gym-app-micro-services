@@ -11,9 +11,9 @@ import java.util.UUID;
 
 public interface TrainingService {
 
-    TrainingResponseDTO createTraining(TrainingRequestDTO training, Authentication authentication);
+    TrainingResponseDTO createTraining(TrainingRequestDTO training);
 
-    String deleteTraining(UUID trainingId, Authentication authentication);
+    String deleteTraining(UUID trainingId);
 
     String deleteTraining(Training training, String username);
 

@@ -44,15 +44,15 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @PreAuthorize("hasRole('TRAINER')")
-    public TrainingResponseDTO createTraining(TrainingRequestDTO trainingRequestDTO, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//    @PreAuthorize("hasRole('TRAINER')")
+    public TrainingResponseDTO createTraining(TrainingRequestDTO trainingRequestDTO) {
+
         Training training = trainingMapper.toTraining(
                 trainingRequestDTO,
                 trainingTypeService.getTrainingByTrainingName(trainingRequestDTO.getTrainingType()),
-                trainerRepository.findTraineeByUser_Username(userDetails.getUsername())
+                trainerRepository.findTrainerByUser_Username(trainingRequestDTO.getTrainerUsername())
                         .orElseThrow(
-                                () -> new TrainerNotFoundException("Trainer with username " + userDetails.getUsername() + " not found")
+                                () -> new TrainerNotFoundException("Trainer with username " + trainingRequestDTO.getTrainerUsername() + " not found")
                         ),
                 traineeRepository.findTraineeByUser_Username(trainingRequestDTO.getTraineeUsername())
                         .orElseThrow(
@@ -60,7 +60,7 @@ public class TrainingServiceImpl implements TrainingService {
                         )
         );
 
-        traineeTrainerService.assignTrainerToTrainee(trainingRequestDTO.getTraineeUsername(), userDetails.getUsername());
+        traineeTrainerService.assignTrainerToTrainee(trainingRequestDTO.getTraineeUsername(), trainingRequestDTO.getTrainerUsername());
 
         TrainerWorkloadResponseDTO trainerWorkloadResponseDTO = trainerWorkloadService.actionOnADD(training);
         log.info("Trainer workload response on ADD: {}", trainerWorkloadResponseDTO);
@@ -71,12 +71,10 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('TRAINER')")
-    public String deleteTraining(UUID trainingId, Authentication connectedUser) {
-        UserDetails principal = (UserDetails) connectedUser.getPrincipal();
-        String username = principal.getUsername();
+//    @PreAuthorize("hasRole('TRAINER')")
+    public String deleteTraining(UUID trainingId) {
 
-        return trainingRepository.findByTrainingIdAndTrainer_User_Username(trainingId, username)
+        return trainingRepository.findTrainingByTrainingId(trainingId)
                 .map(this::tripleDeletion).orElseThrow(
                         () -> new TrainingNotFoundException("Training with training id " + trainingId + " not found")
                 );

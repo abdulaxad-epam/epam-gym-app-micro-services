@@ -66,7 +66,7 @@ public class TrainerTraineeServiceTest {
         trainer.setUser(trainerUser);
 
         when(traineeRepository.findTraineeByUser_Username(traineeUsername)).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findTraineeByUser_Username(trainerUsername)).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username(trainerUsername)).thenReturn(Optional.of(trainer));
         when(trainerTraineeRepository.existsById_TrainerIdAndId_TraineeId(any(UUID.class), any(UUID.class))).thenReturn(false);
 
         service.assignTrainerToTrainee(traineeUsername, trainerUsername);
@@ -92,7 +92,7 @@ public class TrainerTraineeServiceTest {
         trainer.setUser(trainerUser);
 
         when(traineeRepository.findTraineeByUser_Username(traineeUsername)).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findTraineeByUser_Username(trainerUsername)).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username(trainerUsername)).thenReturn(Optional.of(trainer));
         when(trainerTraineeRepository.existsById_TrainerIdAndId_TraineeId(any(UUID.class), any(UUID.class))).thenReturn(true);
 
         assertThrows(TraineeHasAssignedBeforeException.class,
@@ -122,7 +122,7 @@ public class TrainerTraineeServiceTest {
         when(auth.getPrincipal()).thenReturn(userDetails);
 
         when(traineeRepository.findTraineeByUser_Username("trainee1")).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findTraineeByUser_Username("trainer1")).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username("trainer1")).thenReturn(Optional.of(trainer));
 
         TrainerResponseDTO dto = new TrainerResponseDTO();
         when(trainerMapper.toTrainerResponseDTO(trainer)).thenReturn(dto);

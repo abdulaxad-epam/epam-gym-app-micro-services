@@ -16,11 +16,14 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.lang.reflect.Executable;
+import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -140,6 +143,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ExceptionMessage.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
+                        .error(e.getMessage())
+                        .requestId(Logging.getTransactionId())
+                        .message(e.getMessage())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ExceptionMessage> handleAccessDeniedException(AuthorizationDeniedException e){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ExceptionMessage.builder()
+                        .status(HttpStatus.FORBIDDEN.value())
                         .error(e.getMessage())
                         .requestId(Logging.getTransactionId())
                         .message(e.getMessage())

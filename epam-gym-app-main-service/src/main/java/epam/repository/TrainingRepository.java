@@ -1,5 +1,6 @@
 package epam.repository;
 
+import com.netflix.appinfo.ApplicationInfoManager;
 import epam.entity.Training;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,4 +17,6 @@ public interface TrainingRepository extends JpaRepository<Training, UUID> {
     Optional<Training> findByTrainingIdAndTrainer_User_Username(UUID trainingId, String trainerUserUsername);
 
     List<Training> findTrainingsByTrainer_User_Username(String trainerUserUsername);
+
+    Optional<Training> findTrainingByTrainingId(UUID trainingId);
 }

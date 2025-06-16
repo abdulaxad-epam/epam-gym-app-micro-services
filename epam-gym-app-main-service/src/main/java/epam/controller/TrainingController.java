@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,8 +37,8 @@ public class TrainingController {
     @PostMapping
     public ResponseEntity<TrainingResponseDTO> createTraining(
             @Parameter(description = "Training creation request body", required = true)
-            @Valid @RequestBody TrainingRequestDTO trainingRequestDTO, Authentication authentication) {
-        return ResponseEntity.ok(trainingService.createTraining(trainingRequestDTO, authentication));
+            @Valid @RequestBody TrainingRequestDTO trainingRequestDTO) {
+        return ResponseEntity.ok(trainingService.createTraining(trainingRequestDTO));
     }
 
     @Operation(summary = "Delete training session")
@@ -48,7 +47,7 @@ public class TrainingController {
                     schema = @Schema(implementation = TrainingResponseDTO.class)))
     @ApiResponse(responseCode = "400", description = "Invalid training data", content = @Content)
     @DeleteMapping("/{trainingId}")
-    public ResponseEntity<String> deleteTraining(@PathVariable UUID trainingId, Authentication authentication) {
-        return ResponseEntity.ok(trainingService.deleteTraining(trainingId, authentication));
+    public ResponseEntity<String> deleteTraining(@PathVariable UUID trainingId) {
+        return ResponseEntity.ok(trainingService.deleteTraining(trainingId));
     }
 }

@@ -101,7 +101,7 @@ public class TrainerTraineeServiceImpl implements TraineeTrainerService {
     private TrainerTraineeRecord getTrainerTraineeRecord(String currentUsername, String trainerUsername) {
         Trainee trainee = traineeRepository.findTraineeByUser_Username(currentUsername)
                 .orElseThrow(() -> new TraineeNotFoundException(currentUsername));
-        Trainer trainer = trainerRepository.findTraineeByUser_Username(trainerUsername)
+        Trainer trainer = trainerRepository.findTrainerByUser_Username(trainerUsername)
                 .orElseThrow(() -> new TrainerNotFoundException(trainerUsername));
         return new TrainerTraineeRecord(trainee, trainer);
     }

@@ -80,6 +80,7 @@ public class TrainingServiceTest {
     public void testCreateTraining_ShouldReturnTrainingResponseDTO() {
         TrainingRequestDTO requestDTO = new TrainingRequestDTO();
         requestDTO.setTraineeUsername(traineeUsername);
+        requestDTO.setTrainerUsername(trainerUsername);
         requestDTO.setTrainingType("Yoga");
 
         Trainer trainer = new Trainer();
@@ -92,13 +93,13 @@ public class TrainingServiceTest {
         when(authentication.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn(trainerUsername);
 
-        when(trainerRepository.findTraineeByUser_Username(trainerUsername)).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username(trainerUsername)).thenReturn(Optional.of(trainer));
         when(traineeRepository.findTraineeByUser_Username(traineeUsername)).thenReturn(Optional.of(trainee));
         when(trainingMapper.toTraining(eq(requestDTO), any(), eq(trainer), eq(trainee))).thenReturn(training);
         when(trainerWorkloadService.actionOnADD(training)).thenReturn(new TrainerWorkloadResponseDTO());
         when(trainingMapper.toTrainingResponseDTO(training)).thenReturn(responseDTO);
 
-        TrainingResponseDTO result = trainingService.createTraining(requestDTO, authentication);
+        TrainingResponseDTO result = trainingService.createTraining(requestDTO);
 
         assertEquals(responseDTO, result);
         verify(trainingRepository).save(training);
@@ -113,12 +114,12 @@ public class TrainingServiceTest {
 
         when(authentication.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn(trainerUsername);
-        when(trainingRepository.findByTrainingIdAndTrainer_User_Username(trainingId, trainerUsername))
+        when(trainingRepository.findTrainingByTrainingId(trainingId))
                 .thenReturn(Optional.of(training));
 
         when(trainerWorkloadService.actionOnDELETE(training)).thenReturn(new TrainerWorkloadResponseDTO());
 
-        String result = trainingService.deleteTraining(trainingId, authentication);
+        String result = trainingService.deleteTraining(trainingId);
 
         assertEquals("Training with id " + trainingId + " deleted successfully", result);
         verify(traineeTrainerService).unassignTrainerFromTrainee(training);
@@ -135,7 +136,7 @@ public class TrainingServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(TrainingNotFoundException.class, () ->
-                trainingService.deleteTraining(trainingId, authentication));
+                trainingService.deleteTraining(trainingId));
     }
 
     @Test
@@ -168,17 +169,18 @@ public class TrainingServiceTest {
     public void testCreateTraining_ShouldThrowTrainerNotFoundException() {
         TrainingRequestDTO requestDTO = new TrainingRequestDTO();
         requestDTO.setTraineeUsername("traineeUser");
+        requestDTO.setTrainerUsername(trainerUsername);
         requestDTO.setTrainingType("Yoga");
 
         when(authentication.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn(trainerUsername);
-        when(trainerRepository.findTraineeByUser_Username(trainerUsername)).thenReturn(Optional.empty());
+        when(trainerRepository.findTrainerByUser_Username(trainerUsername)).thenReturn(Optional.empty());
 
         assertThrows(TrainerNotFoundException.class, () ->
-                trainingService.createTraining(requestDTO, authentication)
+                trainingService.createTraining(requestDTO)
         );
 
-        verify(trainerRepository).findTraineeByUser_Username(trainerUsername);
+        verify(trainerRepository).findTrainerByUser_Username(trainerUsername);
         verifyNoInteractions(traineeRepository, trainingMapper, trainingRepository, trainerWorkloadService);
     }
 
@@ -186,6 +188,7 @@ public class TrainingServiceTest {
     public void testCreateTraining_ShouldThrowTraineeNotFoundException() {
         TrainingRequestDTO requestDTO = new TrainingRequestDTO();
         requestDTO.setTraineeUsername(traineeUsername);
+        requestDTO.setTrainerUsername(trainerUsername);
         requestDTO.setTrainingType("Yoga");
 
         Trainer trainer = new Trainer();
@@ -193,14 +196,14 @@ public class TrainingServiceTest {
 
         when(authentication.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn(trainerUsername);
-        when(trainerRepository.findTraineeByUser_Username(trainerUsername)).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username(trainerUsername)).thenReturn(Optional.of(trainer));
         when(traineeRepository.findTraineeByUser_Username(traineeUsername)).thenReturn(Optional.empty());
 
         assertThrows(TraineeNotFoundException.class, () ->
-                trainingService.createTraining(requestDTO, authentication)
+                trainingService.createTraining(requestDTO)
         );
 
-        verify(traineeRepository).findTraineeByUser_Username(traineeUsername);
+        verify(trainerRepository).findTrainerByUser_Username(trainerUsername);
         verifyNoInteractions(trainingMapper, trainingRepository, trainerWorkloadService);
     }
 }
