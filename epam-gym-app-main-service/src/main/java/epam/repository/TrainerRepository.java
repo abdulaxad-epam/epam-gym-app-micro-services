@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface TrainerRepository extends JpaRepository<Trainer, Integer> {
 
-    Optional<Trainer> findTraineeByUser_Username(String username);
+    Optional<Trainer> findTrainerByUser_Username(String username);
 
     @Modifying
     void deleteTrainerByUser_Username(String username);
@@ -31,4 +31,5 @@ public interface TrainerRepository extends JpaRepository<Trainer, Integer> {
             @Param("periodTo") LocalDateTime periodTo,
             @Param("traineeName") String traineeName
     );
+
 }

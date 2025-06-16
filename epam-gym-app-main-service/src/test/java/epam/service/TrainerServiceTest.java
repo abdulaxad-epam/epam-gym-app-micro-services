@@ -104,14 +104,14 @@ public class TrainerServiceTest {
         Trainer trainer = new Trainer();
         trainer.setUser(new User());
 
-        when(trainerRepository.findTraineeByUser_Username("trainerUser")).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username("trainerUser")).thenReturn(Optional.of(trainer));
         when(trainingTypeService.getTrainingByTrainingName("Pilates")).thenReturn(trainingType);
         when(trainerMapper.toTrainerResponseDTO(trainer)).thenReturn(new TrainerResponseDTO());
 
         TrainerResponseDTO result = trainerService.updateTrainer(auth, requestDTO);
 
         assertNotNull(result);
-        verify(trainerRepository).findTraineeByUser_Username("trainerUser");
+        verify(trainerRepository).findTrainerByUser_Username("trainerUser");
         verify(trainingTypeService).getTrainingByTrainingName("Pilates");
     }
 
@@ -121,7 +121,7 @@ public class TrainerServiceTest {
         when(auth.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("missingTrainer");
 
-        when(trainerRepository.findTraineeByUser_Username("missingTrainer")).thenReturn(Optional.empty());
+        when(trainerRepository.findTrainerByUser_Username("missingTrainer")).thenReturn(Optional.empty());
 
         assertThrows(TrainerNotFoundException.class, () -> trainerService.updateTrainer(auth, new TrainerRequestDTO()));
     }
@@ -133,7 +133,7 @@ public class TrainerServiceTest {
 
         when(auth.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("trainerUser");
-        when(trainerRepository.findTraineeByUser_Username("trainerUser")).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username("trainerUser")).thenReturn(Optional.of(trainer));
         when(trainerMapper.toTrainerResponseDTO(trainer)).thenReturn(responseDTO);
 
         TrainerResponseDTO result = trainerService.getTrainerByUsername(auth);
@@ -145,7 +145,7 @@ public class TrainerServiceTest {
     public void testGetTrainerByUsername_TrainerNotFound() {
         when(auth.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("trainerUser");
-        when(trainerRepository.findTraineeByUser_Username("trainerUser")).thenReturn(Optional.empty());
+        when(trainerRepository.findTrainerByUser_Username("trainerUser")).thenReturn(Optional.empty());
 
         assertThrows(TrainerNotFoundException.class, () -> trainerService.getTrainerByUsername(auth));
     }
@@ -163,7 +163,7 @@ public class TrainerServiceTest {
     public void testUpdateTrainerStatus_TrainerNotFound() {
         when(auth.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("trainerUser");
-        when(trainerRepository.findTraineeByUser_Username("trainerUser")).thenReturn(Optional.empty());
+        when(trainerRepository.findTrainerByUser_Username("trainerUser")).thenReturn(Optional.empty());
 
         assertThrows(TrainerNotFoundException.class, () -> trainerService.updateTrainerStatus(auth, true));
     }
@@ -203,13 +203,13 @@ public class TrainerServiceTest {
 
         when(auth.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("trainerX");
-        when(trainerRepository.findTraineeByUser_Username("trainerX")).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username("trainerX")).thenReturn(Optional.of(trainer));
         when(trainerMapper.toTrainerResponseDTO(trainer)).thenReturn(new TrainerResponseDTO());
 
         TrainerResponseDTO result = trainerService.getTrainerByUsername(auth);
 
         assertNotNull(result);
-        verify(trainerRepository).findTraineeByUser_Username("trainerX");
+        verify(trainerRepository).findTrainerByUser_Username("trainerX");
     }
 
     @Test
@@ -219,7 +219,7 @@ public class TrainerServiceTest {
         when(auth.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("notFound");
 
-        when(trainerRepository.findTraineeByUser_Username("notFound")).thenReturn(Optional.empty());
+        when(trainerRepository.findTrainerByUser_Username("notFound")).thenReturn(Optional.empty());
 
         assertThrows(TrainerNotFoundException.class, () -> trainerService.getTrainerByUsername(auth));
     }
@@ -234,7 +234,7 @@ public class TrainerServiceTest {
 
         when(auth.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("trainerX");
-        when(trainerRepository.findTraineeByUser_Username("trainerX")).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username("trainerX")).thenReturn(Optional.of(trainer));
 
         trainerService.updateTrainerStatus(auth, true);
 
@@ -248,7 +248,7 @@ public class TrainerServiceTest {
 
         when(auth.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("ghost");
-        when(trainerRepository.findTraineeByUser_Username("ghost")).thenReturn(Optional.empty());
+        when(trainerRepository.findTrainerByUser_Username("ghost")).thenReturn(Optional.empty());
 
         assertThrows(TrainerNotFoundException.class, () -> trainerService.updateTrainerStatus(auth, true));
     }

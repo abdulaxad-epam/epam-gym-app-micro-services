@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 
 import java.util.UUID;
 
@@ -21,9 +20,6 @@ public class TrainingControllerTest {
 
     @Mock
     private TrainingService trainingService;
-
-    @Mock
-    private Authentication authentication;
 
     private TrainingResponseDTO trainingResponse;
     private TrainingRequestDTO trainingRequest;
@@ -39,10 +35,10 @@ public class TrainingControllerTest {
 
     @Test
     public void testCreateTraining_ShouldReturnCreatedTraining() {
-        when(trainingService.createTraining(trainingRequest, authentication)).thenReturn(trainingResponse);
+        when(trainingService.createTraining(trainingRequest)).thenReturn(trainingResponse);
 
         ResponseEntity<TrainingResponseDTO> response =
-                trainingController.createTraining(trainingRequest, authentication);
+                trainingController.createTraining(trainingRequest);
 
         assertEquals(200, response.getStatusCode().value());
         assertEquals(trainingResponse, response.getBody());
@@ -53,10 +49,10 @@ public class TrainingControllerTest {
         UUID trainingId = UUID.randomUUID();
         String expectedMessage = "Training removed successfully";
 
-        when(trainingService.deleteTraining(trainingId, authentication)).thenReturn(expectedMessage);
+        when(trainingService.deleteTraining(trainingId)).thenReturn(expectedMessage);
 
         ResponseEntity<String> response =
-                trainingController.deleteTraining(trainingId, authentication);
+                trainingController.deleteTraining(trainingId);
 
         assertEquals(200, response.getStatusCode().value());
         assertEquals(expectedMessage, response.getBody());

@@ -61,7 +61,7 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public TrainerResponseDTO updateTrainer(Authentication connectedUser, TrainerRequestDTO trainerRequestDTO) {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
-        return trainerRepository.findTraineeByUser_Username(user.getUsername()).map(trainer -> {
+        return trainerRepository.findTrainerByUser_Username(user.getUsername()).map(trainer -> {
             trainer.setSpecialization(
                     trainingTypeService.getTrainingByTrainingName(trainerRequestDTO.getSpecialization())
             );
@@ -104,7 +104,7 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public TrainerResponseDTO getTrainerByUsername(Authentication connectedUser) {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
-        return trainerRepository.findTraineeByUser_Username(user.getUsername())
+        return trainerRepository.findTrainerByUser_Username(user.getUsername())
                 .map(trainerMapper::toTrainerResponseDTO)
                 .orElseThrow(() -> new TrainerNotFoundException("Trainer not found"));
     }
@@ -129,7 +129,7 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public void updateTrainerStatus(Authentication connectedUser, Boolean isActive) {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
-        Optional<Trainer> trainer = trainerRepository.findTraineeByUser_Username(user.getUsername());
+        Optional<Trainer> trainer = trainerRepository.findTrainerByUser_Username(user.getUsername());
         trainer.ifPresentOrElse(t -> t.getUser().setIsActive(isActive), () -> {
             throw new TrainerNotFoundException("Trainer not found");
         });
