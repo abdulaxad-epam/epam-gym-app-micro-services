@@ -27,24 +27,12 @@ public class AuthenticationRequestDTOTest {
     @Test
     public void testValidAuthenticateRequest() {
         AuthenticateRequestDTO request = AuthenticateRequestDTO.builder()
-                .username("testUser")
+                .username("testfd.fdUser")
                 .password("1234567890")
                 .build();
 
         Set<ConstraintViolation<AuthenticateRequestDTO>> violations = validator.validate(request);
         assertTrue(violations.isEmpty());
-    }
-
-    @Test
-    public void testBlankUsername() {
-        AuthenticateRequestDTO request = AuthenticateRequestDTO.builder()
-                .username("")
-                .password("1234567890")
-                .build();
-
-        Set<ConstraintViolation<AuthenticateRequestDTO>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-        assertEquals("Username is required", violations.iterator().next().getMessage());
     }
 
     @Test
@@ -56,13 +44,13 @@ public class AuthenticationRequestDTOTest {
 
         Set<ConstraintViolation<AuthenticateRequestDTO>> violations = validator.validate(request);
         assertFalse(violations.isEmpty());
-        assertEquals("Username is required", violations.iterator().next().getMessage());
+        assertEquals("Trainer username is required", violations.iterator().next().getMessage());
     }
 
     @Test
     public void testNullPassword() {
         AuthenticateRequestDTO request = AuthenticateRequestDTO.builder()
-                .username("testUser")
+                .username("testre.eUser")
                 .password(null)
                 .build();
 

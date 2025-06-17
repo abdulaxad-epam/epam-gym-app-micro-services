@@ -2,7 +2,7 @@ package epam.service.impl;
 
 import epam.client.dto.TrainerWorkloadResponseDTO;
 import epam.client.service.TrainerWorkloadService;
-import epam.dto.response_dto.TrainingRequestDTO;
+import epam.dto.request_dto.TrainingRequestDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
 import epam.entity.Training;
 import epam.exception.exception.TraineeNotFoundException;

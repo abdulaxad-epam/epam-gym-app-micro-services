@@ -1,6 +1,6 @@
 package epam.controller;
 
-import epam.dto.response_dto.TrainingRequestDTO;
+import epam.dto.request_dto.TrainingRequestDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
 import epam.service.TrainingService;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +52,7 @@ public class TrainingControllerTest {
         when(trainingService.deleteTraining(trainingId)).thenReturn(expectedMessage);
 
         ResponseEntity<String> response =
-                trainingController.deleteTraining(trainingId);
+                trainingController.deleteTraining(String.valueOf(trainingId));
 
         assertEquals(200, response.getStatusCode().value());
         assertEquals(expectedMessage, response.getBody());
