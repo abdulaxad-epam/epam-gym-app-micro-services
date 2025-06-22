@@ -20,6 +20,7 @@ public class TrainingTypeServiceImpl implements TrainingTypeService {
 
     @Override
     public TrainingType getTrainingByTrainingName(String trainingName) {
+
         return trainingTypeRepository.findTrainingTypeByDescription(trainingName)
                 .orElseThrow(() -> new TrainingTypeNotFoundException("Training with training name " + trainingName + " not found"));
     }

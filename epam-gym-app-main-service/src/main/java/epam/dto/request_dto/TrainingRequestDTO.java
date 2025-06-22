@@ -1,7 +1,7 @@
 package epam.dto.request_dto;
 
+import epam.util.Future;
 import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -18,9 +18,9 @@ import lombok.ToString;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-@Builder
 @Getter
 @Setter
+@Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,7 +45,7 @@ public class TrainingRequestDTO implements Serializable {
             message = "Training name must not be boolean value!!!")
     private String trainingName;
 
-    @FutureOrPresent(message = "The training start date must be in the future or today")
+    @Future(message = "The training start date must be in the future or today and before '2030'", toYear = 2030)
     @NotNull(message = "Training date must be specified")
     private LocalDate trainingDate;
 

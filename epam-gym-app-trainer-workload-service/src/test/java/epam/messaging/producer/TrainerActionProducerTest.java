@@ -41,7 +41,7 @@ public class TrainerActionProducerTest {
     @BeforeEach
     void setUp() {
         TrainerWorkloadSummaryInYearsResponseDTO yearSummary = TrainerWorkloadSummaryInYearsResponseDTO.builder()
-                .year(String.valueOf(2023))
+                .year(2023)
                 .workloadSummaryInMonths(Collections.emptyList())
                 .build();
 

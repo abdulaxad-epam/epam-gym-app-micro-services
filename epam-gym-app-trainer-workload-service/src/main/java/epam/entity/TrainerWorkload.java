@@ -1,51 +1,48 @@
 package epam.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
-import java.time.LocalDate;
-import java.util.UUID;
+import java.util.List;
 
-@Entity
 @Setter
 @Getter
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "trainer_workload")
+@Document(collection = "trainer_workload")
 public class TrainerWorkload {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID trainerWorkloadId;
+    private String id;
 
-    @Column(nullable = false)
+    @Indexed(unique = true)
+    @Field(targetType = FieldType.STRING, write = Field.Write.NON_NULL)
     private String trainerUsername;
 
-    @Column(nullable = false)
+    @Indexed
+    @Field(targetType = FieldType.STRING, write = Field.Write.NON_NULL)
     private String trainerFirstName;
 
-    @Column(nullable = false)
+    @Indexed
+    @Field(targetType = FieldType.STRING, write = Field.Write.NON_NULL)
     private String trainerLastName;
 
-    @Column(nullable = false)
-
+    @Field(targetType = FieldType.BOOLEAN, write = Field.Write.NON_NULL)
     private Boolean isActive;
 
-    @Column(nullable = false)
-    private LocalDate trainingDate;
-
-    @Column(nullable = false)
-    private Integer trainingDuration;
+    @Field(targetType = FieldType.ARRAY, write = Field.Write.NON_NULL)
+    private List<YearlyWorkload> years;
 
 }

@@ -58,6 +58,8 @@ services:
       EUREKA_INSTANCE_PREFER-IP-ADDRESS: true
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka/
       SPRING_ACTIVEMQ_BROKER-URL: tcp://messaging-service:61616
+      SPRING_DATA_MONGODB_URI: mongodb://admin:admin@mongodb:27017/?authSource=admin
+      SPRING_DATA_MONGODB_DATABASE: mongo-database
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
       interval: 10s
@@ -99,6 +101,21 @@ services:
     networks:
       - bridge-network
 
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    networks:
+      - bridge-network
+    volumes:
+      - mongodb-data:/data/db
+    environment:
+      - MONGODB_INITDB_ROOT_USERNAME=admin
+      - MONGODB_INITDB_ROOT_PASSWORD=admin
+      - MONGODB_INITDB_ROOT_DATABASE=mongo-database
+
+
   prometheus:
     image: prom/prometheus:v3.4.0
     container_name: prometheus
@@ -137,4 +154,6 @@ volumes:
   activemq_data:
     driver: local
   grafana-storage:
+    driver: local
+  mongodb-data:
     driver: local

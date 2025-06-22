@@ -1,25 +1,9 @@
 spring:
-  h2:
-    console:
-      path: /h2-console
-      settings:
-        web-allow-others: true
-  datasource:
-    url: jdbc:h2:mem:gym;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: abdulaxad
-    password: root
-
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: false
-      jakarta.persistence.sql-load-script-source: classpath:database_initializer/data.sql
-    open-in-view: true
-
+  data:
+    mongodb:
+      uri: mongodb://admin:admin@localhost:27017/?authSource=admin
+      database: mongo-database
+      max-daily-working-hour: 480
 application:
   security:
     internal-token:

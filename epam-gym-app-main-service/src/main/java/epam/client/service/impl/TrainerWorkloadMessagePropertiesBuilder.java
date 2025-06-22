@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TrainerWorkloadMessagePropertiesBuilder {
 
-
     public MessagePostProcessor buildMessagePropertyOnProduce() {
         return message -> {
             message.setStringProperty("_type", "epam.dto.TrainerWorkloadRequestDTO");

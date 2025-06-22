@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TrainerWorkloadSummaryInYearsResponseDTO implements Serializable {
-    private String year;
+    private Integer year;
     private List<TrainerWorkloadSummaryInMonthsResponseDTO> workloadSummaryInMonths;
 }
 

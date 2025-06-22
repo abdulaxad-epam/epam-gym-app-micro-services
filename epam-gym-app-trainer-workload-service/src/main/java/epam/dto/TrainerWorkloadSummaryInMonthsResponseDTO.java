@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TrainerWorkloadSummaryInMonthsResponseDTO {
-    private String month;
-    private String durationInMinutes;
+    private Integer month;
+    private Integer durationInMinutes;
 }
 

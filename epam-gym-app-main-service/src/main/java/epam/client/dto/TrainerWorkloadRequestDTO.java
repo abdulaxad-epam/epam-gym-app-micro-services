@@ -1,6 +1,6 @@
 package epam.client.dto;
 
-import jakarta.validation.constraints.Future;
+import epam.util.Future;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -35,7 +35,7 @@ public class TrainerWorkloadRequestDTO implements Serializable {
     @NotNull(message = "IsActive field is required")
     private Boolean isActive;
 
-    @Future(message = "The training start date must be in the future")
+    @Future(message = "The training start date must be in the future and before '2030'", toYear = 2030)
     @NotNull(message = "Training date must be specified")
     private LocalDate trainingDate;
 

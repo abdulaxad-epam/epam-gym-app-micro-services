@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -43,9 +44,7 @@ public class TrainerWorkloadSummaryConsumerTest {
         int year = 2023;
         int month = 10;
 
-        assertThrows(NullPointerException.class, () -> {
-            consumer.getTrainerWorkloadSummary(username, year, month);
-        });
+        assertNull(consumer.getTrainerWorkloadSummary(username, year, month));
     }
 
     @Test
@@ -55,11 +54,9 @@ public class TrainerWorkloadSummaryConsumerTest {
         int year = 2023;
         int month = 10;
 
-        trainer_workload_summary_pool.put(username, new ConcurrentHashMap<>()); // Only username exists
+        trainer_workload_summary_pool.put(username, new ConcurrentHashMap<>());
 
-        assertThrows(NullPointerException.class, () -> {
-            consumer.getTrainerWorkloadSummary(username, year, month);
-        });
+        assertNull(consumer.getTrainerWorkloadSummary(username, year, month));
     }
 
     @Test
@@ -73,9 +70,7 @@ public class TrainerWorkloadSummaryConsumerTest {
         trainer_workload_summary_pool.put(username, new ConcurrentHashMap<>());
         trainer_workload_summary_pool.get(username).put(year, new ConcurrentHashMap<>()); // Only year exists
 
-        assertThrows(NullPointerException.class, () -> {
-            consumer.getTrainerWorkloadSummary(username, year, month);
-        });
+        assertNull(consumer.getTrainerWorkloadSummary(username, year, month));
     }
 
     @Test

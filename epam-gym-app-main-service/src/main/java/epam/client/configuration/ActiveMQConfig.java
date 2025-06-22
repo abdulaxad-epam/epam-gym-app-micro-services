@@ -71,12 +71,12 @@ public class ActiveMQConfig {
             RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
 
             // Configure the redelivery settings
-            redeliveryPolicy.setInitialRedeliveryDelay(1000L); // First retry after 1 second
-            redeliveryPolicy.setRedeliveryDelay(5000L);       // Subsequent retries after 5 seconds
-            redeliveryPolicy.setUseExponentialBackOff(true);  // Enable exponential backoff
-            redeliveryPolicy.setBackOffMultiplier(2.0);      // Double the delay each time
-            redeliveryPolicy.setMaximumRedeliveryDelay(60000L); // Max delay of 60 seconds
-            redeliveryPolicy.setMaximumRedeliveries(4);       // Total 5 attempts (initial + 4 retries)
+//            redeliveryPolicy.setInitialRedeliveryDelay(1000L); // First retry after 1 second
+//            redeliveryPolicy.setRedeliveryDelay(5000L);       // Subsequent retries after 5 seconds
+//            redeliveryPolicy.setUseExponentialBackOff(true);  // Enable exponential backoff
+//            redeliveryPolicy.setBackOffMultiplier(2.0);      // Double the delay each time
+//            redeliveryPolicy.setMaximumRedeliveryDelay(60000L); // Max delay of 60 seconds
+            redeliveryPolicy.setMaximumRedeliveries(0);       // Total 5 attempts (initial + 4 retries)
             connectionFactory.setRedeliveryPolicy(redeliveryPolicy);
             connectionFactory.setTrustAllPackages(true);
         };
@@ -88,7 +88,7 @@ public class ActiveMQConfig {
         defaultJmsListenerContainerFactory.setConnectionFactory(platformTransactionManager());
         defaultJmsListenerContainerFactory.setMessageConverter(jacksonJmsMessageConverter());
         defaultJmsListenerContainerFactory.setTransactionManager(jmsTransactionManager());
-        defaultJmsListenerContainerFactory.setErrorHandler(e -> log.warn("Transactional error: {}", e.getMessage()));
+        defaultJmsListenerContainerFactory.setErrorHandler(e -> log.warn("Transactional error:", e));
 
         return defaultJmsListenerContainerFactory;
     }

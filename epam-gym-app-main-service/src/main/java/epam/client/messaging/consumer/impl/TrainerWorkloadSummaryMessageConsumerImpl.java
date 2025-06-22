@@ -15,13 +15,17 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class TrainerWorkloadSummaryMessageConsumerImpl implements TrainerWorkloadSummaryMessageConsumer {
 
-    private final Map<String, Map<Integer, Map<Integer, TrainerWorkloadSummaryResponseDTO>>> trainer_workload_summary_pool = new ConcurrentHashMap<>();
+    private final Map<String, Map<Integer, Map<Integer, TrainerWorkloadSummaryResponseDTO>>> trainerWorkloadSummaryPool = new ConcurrentHashMap<>();
 
     @Override
     public TrainerWorkloadSummaryResponseDTO getTrainerWorkloadSummary(String trainerUsername, Integer year,
                                                                        Integer month) {
-
-        return trainer_workload_summary_pool.get(trainerUsername).get(year).get(month);
+        if (trainerWorkloadSummaryPool.get(trainerUsername) == null ||
+                trainerWorkloadSummaryPool.get(trainerUsername).get(year) == null ||
+                trainerWorkloadSummaryPool.get(trainerUsername).get(year).get(month) == null) {
+            return null;
+        }
+        return trainerWorkloadSummaryPool.get(trainerUsername).get(year).get(month);
 
     }
 
@@ -36,7 +40,7 @@ public class TrainerWorkloadSummaryMessageConsumerImpl implements TrainerWorkloa
         Map<Integer, Map<Integer, TrainerWorkloadSummaryResponseDTO>> map = Map.of(year,
                 Map.of(month, trainerWorkloadSummaryResponseDTO));
 
-        trainer_workload_summary_pool.put(trainerWorkloadSummaryResponseDTO.getUsername(), map);
+        trainerWorkloadSummaryPool.put(trainerWorkloadSummaryResponseDTO.getUsername(), map);
 
     }
 }

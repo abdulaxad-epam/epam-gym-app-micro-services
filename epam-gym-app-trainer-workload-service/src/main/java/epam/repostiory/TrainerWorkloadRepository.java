@@ -1,17 +1,18 @@
 package epam.repostiory;
 
 import epam.entity.TrainerWorkload;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface TrainerWorkloadRepository extends JpaRepository<TrainerWorkload, Long> {
-    List<TrainerWorkload> findTrainerWorkloadsByTrainerUsername(String trainerUsername);
+public interface TrainerWorkloadRepository extends MongoRepository<TrainerWorkload, Long> {
 
-    Optional<TrainerWorkload> findTrainerWorkloadByTrainerUsernameAndTrainingDate(String trainerUsername, LocalDate trainingDate);
+    @Query("{'trainerUsername': ?0}")
+    TrainerWorkload findTrainerWorkloadByTrainerUsername(String trainerUsername);
 
-    List<TrainerWorkload> findTrainerWorkloadsByTrainerUsernameAndTrainingDate(String trainerUsername, LocalDate trainingDate);
+
 }
 
