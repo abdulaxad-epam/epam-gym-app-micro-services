@@ -21,6 +21,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.UUID;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 @Slf4j
 @Service
@@ -135,6 +137,7 @@ public class TrainerWorkloadServiceImpl implements TrainerWorkloadService {
             if (dailyWorkload.getDailyTrainingDuration() + trainingDurationInMinutes > maxDailyWorkingHours) {
                 throw new DailyTrainingDurationExceededException("Training duration cannot be more than 8 hours (480 minutes) for a day");
             }
+
 
             dailyWorkload.setDailyTrainingDuration(Math.max(dailyWorkload.getDailyTrainingDuration() + trainingDurationInMinutes, 0));
 

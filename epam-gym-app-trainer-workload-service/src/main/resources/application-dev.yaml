@@ -4,6 +4,7 @@ spring:
       uri: mongodb://admin:admin@localhost:27017/?authSource=admin
       database: mongo-database
       max-daily-working-hour: 480
+      auto-index-creation: true
 application:
   security:
     internal-token:

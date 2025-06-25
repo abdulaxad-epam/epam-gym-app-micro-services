@@ -27,7 +27,6 @@ public class TrainerWorkload {
     @Id
     private String id;
 
-    @Indexed(unique = true)
     @Field(targetType = FieldType.STRING, write = Field.Write.NON_NULL)
     private String trainerUsername;
 
