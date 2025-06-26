@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
@@ -22,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "trainer_workload")
+@CompoundIndex(name = "lf_index", def = "{'trainerFirstName' : 1, 'trainerLastName': 1}")
 public class TrainerWorkload {
 
     @Id
@@ -30,11 +31,9 @@ public class TrainerWorkload {
     @Field(targetType = FieldType.STRING, write = Field.Write.NON_NULL)
     private String trainerUsername;
 
-    @Indexed
     @Field(targetType = FieldType.STRING, write = Field.Write.NON_NULL)
     private String trainerFirstName;
 
-    @Indexed
     @Field(targetType = FieldType.STRING, write = Field.Write.NON_NULL)
     private String trainerLastName;
 
