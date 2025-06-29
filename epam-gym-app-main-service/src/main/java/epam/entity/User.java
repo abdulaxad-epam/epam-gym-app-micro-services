@@ -42,7 +42,7 @@ public class User {
     private String lastname;
 
     @GenerateUsername
-    @Column(nullable = false, unique = true, updatable = false)
+    @Column(nullable = false, updatable = false)
     private String username;
 
     @Enumerated(EnumType.STRING)

@@ -40,6 +40,7 @@ public class TraineeController {
     @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
     @GetMapping(value = "/profile", produces = "application/json")
     public ResponseEntity<TraineeResponseDTO> getTraineeProfile(Authentication connectedUser) {
+
         return ResponseEntity.ok(traineeService.getTraineeProfile(connectedUser));
     }
 

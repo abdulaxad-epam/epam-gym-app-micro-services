@@ -5,10 +5,10 @@ import epam.client.service.TrainerWorkloadService;
 import epam.dto.request_dto.TrainingRequestDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
 import epam.entity.Training;
-import epam.exception.exception.DailyTrainingDurationExceededException;
 import epam.exception.exception.TraineeNotFoundException;
 import epam.exception.exception.TrainerNotFoundException;
 import epam.exception.exception.TrainingNotFoundException;
+import epam.exception.exception.UserNotAuthenticated;
 import epam.mapper.TrainingMapper;
 import epam.repository.TraineeRepository;
 import epam.repository.TrainerRepository;
@@ -19,6 +19,8 @@ import epam.service.TrainingTypeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,8 +45,9 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-//    @PreAuthorize("hasRole('TRAINER')")
-    public TrainingResponseDTO createTraining(TrainingRequestDTO trainingRequestDTO) {
+    public TrainingResponseDTO createTraining(TrainingRequestDTO trainingRequestDTO, Authentication connectedUser) {
+
+        authenticate(trainingRequestDTO, connectedUser);
 
         Training training = trainingMapper.toTraining(
                 trainingRequestDTO,
@@ -70,9 +73,8 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     @Transactional
-//    @PreAuthorize("hasRole('TRAINER')")
-    public String deleteTraining(UUID trainingId) {
-
+    public String deleteTraining(UUID trainingId, Authentication connectedUser) {
+        authenticate(trainingId, connectedUser);
         return trainingRepository.findTrainingByTrainingId(trainingId)
                 .map(this::tripleDeletion).orElseThrow(
                         () -> new TrainingNotFoundException("Training with training id " + trainingId + " not found")
@@ -100,4 +102,22 @@ public class TrainingServiceImpl implements TrainingService {
         trainingRepository.deleteTrainingByTrainingId(training.getTrainingId());
         return "Training with id " + training.getTrainingId() + " deleted successfully";
     }
+
+
+    private void authenticate(TrainingRequestDTO trainingRequestDTO, Authentication connectedUser) {
+        UserDetails principal = (UserDetails) connectedUser.getPrincipal();
+        String username = principal.getUsername();
+        if (!(trainingRequestDTO.getTraineeUsername().equals(username) || trainingRequestDTO.getTrainerUsername().equals(username))) {
+            throw new UserNotAuthenticated("Unauthorized access");
+        }
+    }
+
+    private void authenticate(UUID trainingId, Authentication connectedUser) {
+        UserDetails principal = (UserDetails) connectedUser.getPrincipal();
+        String username = principal.getUsername();
+        if (trainingRepository.existsByTrainingIdAndUsername(trainingId, username) == 0L) {
+            throw new TrainingNotFoundException("Training not found");
+        }
+    }
+
 }

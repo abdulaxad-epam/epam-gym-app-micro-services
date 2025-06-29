@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,8 +39,8 @@ public class TrainingController {
     @PostMapping
     public ResponseEntity<TrainingResponseDTO> createTraining(
             @Parameter(description = "Training creation request body", required = true)
-            @Valid @RequestBody TrainingRequestDTO trainingRequestDTO) {
-        return ResponseEntity.ok(trainingService.createTraining(trainingRequestDTO));
+            @Valid @RequestBody TrainingRequestDTO trainingRequestDTO, Authentication connectedUser) {
+        return ResponseEntity.ok(trainingService.createTraining(trainingRequestDTO, connectedUser));
     }
 
     @Operation(summary = "Delete training session")
@@ -52,7 +53,7 @@ public class TrainingController {
             @PathVariable
             @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
                     message = "Invalid UUID format for trainingId. Must be 32 hexadecimal digits with 4 hyphens (e.g., xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).")
-            String trainingId) {
-        return ResponseEntity.ok(trainingService.deleteTraining(UUID.fromString(trainingId)));
+            String trainingId, Authentication connectedUser) {
+        return ResponseEntity.ok(trainingService.deleteTraining(UUID.fromString(trainingId), connectedUser));
     }
 }

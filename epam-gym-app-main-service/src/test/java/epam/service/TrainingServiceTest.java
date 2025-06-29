@@ -99,7 +99,7 @@ public class TrainingServiceTest {
         when(trainerWorkloadService.actionOnADD(training)).thenReturn(new TrainerWorkloadResponseDTO());
         when(trainingMapper.toTrainingResponseDTO(training)).thenReturn(responseDTO);
 
-        TrainingResponseDTO result = trainingService.createTraining(requestDTO);
+        TrainingResponseDTO result = trainingService.createTraining(requestDTO, authentication);
 
         assertEquals(responseDTO, result);
         verify(trainingRepository).save(training);
@@ -114,12 +114,13 @@ public class TrainingServiceTest {
 
         when(authentication.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn(trainerUsername);
+        when(trainingRepository.existsByTrainingIdAndUsername(trainingId, trainerUsername)).thenReturn(1L);
         when(trainingRepository.findTrainingByTrainingId(trainingId))
                 .thenReturn(Optional.of(training));
 
         when(trainerWorkloadService.actionOnDELETE(training)).thenReturn(new TrainerWorkloadResponseDTO());
 
-        String result = trainingService.deleteTraining(trainingId);
+        String result = trainingService.deleteTraining(trainingId, authentication);
 
         assertEquals("Training with id " + trainingId + " deleted successfully", result);
         verify(traineeTrainerService).unassignTrainerFromTrainee(training);
@@ -132,11 +133,12 @@ public class TrainingServiceTest {
 
         when(authentication.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn(trainerUsername);
+        when(trainingRepository.existsByTrainingIdAndUsername(trainingId, trainerUsername)).thenReturn(1L);
         when(trainingRepository.findByTrainingIdAndTrainer_User_Username(trainingId, trainerUsername))
                 .thenReturn(Optional.empty());
 
         assertThrows(TrainingNotFoundException.class, () ->
-                trainingService.deleteTraining(trainingId));
+                trainingService.deleteTraining(trainingId, authentication));
     }
 
     @Test
@@ -178,7 +180,7 @@ public class TrainingServiceTest {
         when(trainerRepository.findTrainerByUser_Username(trainerUsername)).thenReturn(Optional.empty());
 
         assertThrows(TrainerNotFoundException.class, () ->
-                trainingService.createTraining(requestDTO)
+                trainingService.createTraining(requestDTO, authentication)
         );
 
         verify(trainerRepository).findTrainerByUser_Username(trainerUsername);
@@ -202,7 +204,7 @@ public class TrainingServiceTest {
         when(traineeRepository.findTraineeByUser_Username(traineeUsername)).thenReturn(Optional.empty());
 
         assertThrows(TraineeNotFoundException.class, () ->
-                trainingService.createTraining(requestDTO)
+                trainingService.createTraining(requestDTO, authentication)
         );
 
         verify(traineeRepository).findTraineeByUser_Username(traineeUsername);

@@ -25,6 +25,7 @@ ext {
     jjwtVersion = "0.12.6"
     aspectjVersion = "1.9.19"
     springCloudVersion = "2023.0.1"
+    cucumberVersion = "7.14.0"
 }
 
 repositories {
@@ -74,8 +75,13 @@ dependencies {
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     testImplementation group: 'org.springframework.security', name: 'spring-security-test'
     testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher'
+    testImplementation group: 'io.cucumber', name: 'cucumber-junit-platform-engine', version: cucumberVersion
+    testImplementation group: 'io.cucumber', name: 'cucumber-spring', version: cucumberVersion
+    testImplementation group: 'io.cucumber',name:'cucumber-java', version: cucumberVersion
 }
 
 tasks.named('test') {
+    maxParallelForks = 1
+    forkEvery = 1
     useJUnitPlatform()
 }

@@ -13,5 +13,4 @@ public interface TrainerWorkloadService {
 
     TrainerWorkloadResponseDTO updateExistingTrainerWorkload(TrainerWorkloadRequestDTO trainerWorkloadRequestDTO, ActionType actionType);
 
-    TrainerWorkloadResponseDTO updateTrainer();
 }

@@ -149,35 +149,6 @@ public class TrainerWorkloadServiceImpl implements TrainerWorkloadService {
         return toTrainerWorkloadResponse(trainerWorkload, year, month, day);
     }
 
-    @Override
-    public TrainerWorkloadResponseDTO updateTrainer() {
-        /*       if (!trainerFirstName.equals(trainerWorkload.getTrainerFirstName())) {
-            Update updateTrainerTopLevelField = new Update();
-            boolean isTrainerWorkloadTopLevelFieldUpdated = false;
-
-                log.info("[{}] -  Trainer with username [{}], requested to update its firstname to [{}].", Logging.getTransactionId(), trainerUsername, trainerFirstName);
-                updateTrainerTopLevelField.set("trainerFirstName", trainerUsername);
-                isTrainerWorkloadTopLevelFieldUpdated = true;
-            }
-            if (!trainerLastName.equals(trainerWorkload.getTrainerLastName())) {
-                log.info("[{}] -  Trainer with username [{}], requested to update its lastname to [{}]", Logging.getTransactionId(), trainerUsername, trainerLastName);
-                updateTrainerTopLevelField.set("trainerLastName", trainerLastName);
-                isTrainerWorkloadTopLevelFieldUpdated = true;
-            }
-            if (!isActive.equals(trainerWorkload.getIsActive())) {
-                log.info("[{}] -  Trainer with username [{}], requested to update its status to [{}]", Logging.getTransactionId(), trainerUsername, isActive);
-                updateTrainerTopLevelField.set("isActive", isActive);
-                isTrainerWorkloadTopLevelFieldUpdated = true;
-            }
-
-            if (isTrainerWorkloadTopLevelFieldUpdated) {
-                log.info("[{}] -  Updating trainer workload top level fields", Logging.getTransactionId());
-                mongoTemplate.updateFirst(query, updateTrainerTopLevelField, TrainerWorkload.class);
-            }
- **/
-        return null;
-    }
-
 
     private TrainerWorkloadResponseDTO createNewTrainerWorkload(TrainerWorkloadRequestDTO trainerWorkloadRequestDTO) {
         TrainerWorkload build = toTrainerWorkload(trainerWorkloadRequestDTO);

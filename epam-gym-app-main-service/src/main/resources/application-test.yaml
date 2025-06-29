@@ -13,14 +13,17 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+
     properties:
       hibernate:
         format_sql: true
       jakarta.persistence.sql-load-script-source: classpath:database_initializer/data.sql
     open-in-view: true
+  jms:
+    cache:
+      consumers: false
 
   data:
-
     jpa:
       repositories:
         enabled: true
@@ -41,3 +44,6 @@ application:
       subject-id: main-service
       audience-id: trainer-workload-service
       issuer-id: main-service
+eureka:
+  client:
+    enabled: false

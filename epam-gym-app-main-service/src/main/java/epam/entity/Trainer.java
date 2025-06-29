@@ -32,6 +32,7 @@ public class Trainer {
 
     @JoinColumn(name = "specialization")
     @ManyToOne(fetch = FetchType.EAGER)
+
     private TrainingType specialization;
 
 

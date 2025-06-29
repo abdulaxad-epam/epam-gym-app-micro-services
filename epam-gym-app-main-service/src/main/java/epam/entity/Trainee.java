@@ -34,6 +34,7 @@ public class Trainee {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
+
     @Column
     private String address;
 

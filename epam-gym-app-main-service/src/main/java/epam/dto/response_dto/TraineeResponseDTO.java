@@ -23,4 +23,5 @@ public class TraineeResponseDTO implements Serializable {
     private String address;
 
     private UserResponseDTO user;
+
 }

@@ -42,6 +42,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public RegisterTraineeResponseDTO createTrainee(TraineeRequestDTO traineeRequestDTO) {
 
+
         return traineeMapper.toRegisterTraineeResponseDTO(
                 traineeRepository.save(
                         traineeMapper.toTrainee(traineeRequestDTO)
@@ -118,7 +119,7 @@ public class TraineeServiceImpl implements TraineeService {
         LocalDateTime from = (periodFrom != null) ? LocalDate.parse(periodFrom).atStartOfDay() : LocalDateTime.of(LocalDate.EPOCH, LocalTime.MIDNIGHT);
         LocalDateTime to = (periodTo != null) ? LocalDate.parse(periodTo).atTime(LocalTime.MAX) : LocalDateTime.of(LocalDate.of(2030, 1, 1), LocalTime.MAX);
 
-        // Provide default values for trainerName and trainingType if necessary
+
         if (trainerName == null) trainerName = "";
         if (trainingType == null) trainingType = "";
 

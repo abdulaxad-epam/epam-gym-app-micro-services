@@ -25,6 +25,7 @@ public class TrainerActionConsumer {
         Logging.setTransactionId(threadLocal);
         TrainerWorkloadResponseDTO trainerWorkloadResponseDTO = trainerWorkloadService
                 .actionOn(trainerWorkloadRequestDTO);
+
         log.info("Trainer action message received: {}", trainerWorkloadResponseDTO);
     }
 }

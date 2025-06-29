@@ -33,6 +33,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
@@ -88,14 +89,10 @@ public class AuthenticationServiceTest {
 
         when(traineeService.createTrainee(any())).thenReturn(response);
         when(userDetailsService.loadUserByUsername("trainee")).thenReturn(mock(UserDetails.class));
-        when(jwtService.generateAccessToken(any())).thenReturn("access");
-        when(jwtService.generateRefreshToken(any())).thenReturn("refresh");
 
         AuthenticationResponseDTO result = authenticationService.register(dto);
 
-        assertNotNull(result.getToken());
-        assertEquals("access", result.getToken().getAccessToken());
-        assertEquals("refresh", result.getToken().getRefreshToken());
+        assertNull(result.getToken());
         assertEquals("trainee", result.getUser().getUsername());
     }
 
@@ -117,18 +114,15 @@ public class AuthenticationServiceTest {
         when(passwordGenerator.generatePassword()).thenReturn(rawPassword);
         when(passwordGenerator.encode(rawPassword)).thenReturn(encodedPassword);
         when(trainerService.createTrainer(any(TrainerRequestDTO.class))).thenReturn(trainerResponseDTO);
-        when(userDetailsService.loadUserByUsername("trainer1")).thenReturn(mock(UserDetails.class));
-        when(jwtService.generateAccessToken(any())).thenReturn("access-token");
-        when(jwtService.generateRefreshToken(any())).thenReturn("refresh-token");
+        when(userDetailsService.loadUserByUsername("username")).thenReturn(mock(UserDetails.class));
 
         // When
         AuthenticationResponseDTO response = authenticationService.register(trainerRequestDTO);
 
         // Then
-        assertNotNull(response);
-        assertNotNull(response.getToken());
-        assertEquals("access-token", response.getToken().getAccessToken());
-        assertEquals("refresh-token", response.getToken().getRefreshToken());
+        assertNull(response.getToken());
+        assertEquals("username", response.getUser().getUsername());
+
     }
 
     @Test

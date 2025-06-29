@@ -17,30 +17,42 @@ public class TrainerWorkloadSummaryMessageConsumerImpl implements TrainerWorkloa
 
     private final Map<String, Map<Integer, Map<Integer, TrainerWorkloadSummaryResponseDTO>>> trainerWorkloadSummaryPool = new ConcurrentHashMap<>();
 
+
     @Override
-    public TrainerWorkloadSummaryResponseDTO getTrainerWorkloadSummary(String trainerUsername, Integer year,
-                                                                       Integer month) {
-        if (trainerWorkloadSummaryPool.get(trainerUsername) == null ||
-                trainerWorkloadSummaryPool.get(trainerUsername).get(year) == null ||
-                trainerWorkloadSummaryPool.get(trainerUsername).get(year).get(month) == null) {
+    public TrainerWorkloadSummaryResponseDTO getTrainerWorkloadSummary(String trainerUsername, Integer year, Integer month) {
+        Map<Integer, Map<Integer, TrainerWorkloadSummaryResponseDTO>> yearsMap = trainerWorkloadSummaryPool.get(trainerUsername);
+        if (yearsMap == null) {
             return null;
         }
-        return trainerWorkloadSummaryPool.get(trainerUsername).get(year).get(month);
-
+        Map<Integer, TrainerWorkloadSummaryResponseDTO> monthsMap = yearsMap.get(year);
+        if (monthsMap == null) {
+            return null;
+        }
+        return monthsMap.get(month);
     }
 
     @JmsListener(destination = "trainer.workload.summary.queue")
-    public void consumeOnAction(TrainerWorkloadSummaryResponseDTO trainerWorkloadSummaryResponseDTO, Message message)
+    @Override
+    public void consumeOnAction(TrainerWorkloadSummaryResponseDTO incomingDtoFromMessage, Message message)
             throws JMSException {
-        log.info("Consuming trainer workload summary: {}", trainerWorkloadSummaryResponseDTO);
+        log.info("Consuming trainer workload summary: {}", incomingDtoFromMessage);
 
         int year = message.getIntProperty("year");
         int month = message.getIntProperty("month");
+        String trainerUsername = incomingDtoFromMessage.getUsername();
 
-        Map<Integer, Map<Integer, TrainerWorkloadSummaryResponseDTO>> map = Map.of(year,
-                Map.of(month, trainerWorkloadSummaryResponseDTO));
+        Map<Integer, Map<Integer, TrainerWorkloadSummaryResponseDTO>> trainerYearsMap =
+                trainerWorkloadSummaryPool.computeIfAbsent(trainerUsername, k -> new ConcurrentHashMap<>());
 
-        trainerWorkloadSummaryPool.put(trainerWorkloadSummaryResponseDTO.getUsername(), map);
+        Map<Integer, TrainerWorkloadSummaryResponseDTO> yearMonthsMap =
+                trainerYearsMap.computeIfAbsent(year, k -> new ConcurrentHashMap<>());
 
+        yearMonthsMap.put(month, incomingDtoFromMessage);
+
+    }
+
+    public void clearWorkloadSummaryPool() {
+        this.trainerWorkloadSummaryPool.clear();
+        log.info("TrainerWorkloadSummaryMessageConsumerImpl pool cleared for test.");
     }
 }

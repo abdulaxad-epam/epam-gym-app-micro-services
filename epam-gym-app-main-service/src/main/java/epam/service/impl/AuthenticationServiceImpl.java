@@ -60,7 +60,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         RegisterTraineeResponseDTO trainee = traineeService.createTrainee(traineeRequestDTO);
 
-        return generateToken(trainee.getUser(), password);
+        return register(trainee.getUser(), password);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         RegisterTrainerResponseDTO trainer = trainerService.createTrainer(trainerRequestDTO);
 
-        return generateToken(trainer.getUser(), password);
+        return register(trainer.getUser(), password);
     }
 
     @Override
@@ -175,11 +175,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .build()).build();
     }
 
-    private AuthenticationResponseDTO generateToken(UserResponseDTO userResponseDTO, String password) {
-        var user = userDetailsService.loadUserByUsername(userResponseDTO.getUsername());
-
-        var accessToken = jwtService.generateAccessToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+    private AuthenticationResponseDTO register(UserResponseDTO userResponseDTO, String password) {
 
         var userResponse = UserAuthenticationResponseDTO.builder()
                 .username(userResponseDTO.getUsername())
@@ -188,10 +184,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
 
         return AuthenticationResponseDTO.builder()
-                .token(TokenDTO.builder()
-                        .refreshToken(refreshToken)
-                        .accessToken(accessToken)
-                        .build())
+                .token(null)
                 .user(userResponse)
                 .build();
     }

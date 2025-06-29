@@ -10,7 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
@@ -23,7 +23,7 @@ public class TrainingResponseDTO implements Serializable {
     private UUID trainingId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDateTime trainingDate;
+    private LocalDate trainingDate;
 
     private String trainingType;
 

@@ -14,6 +14,7 @@ import lombok.ToString;
 import java.io.Serializable;
 
 @Builder
+
 @Setter
 @Getter
 @ToString
