@@ -8,3 +8,4 @@ epam-gym-app-main-service/.gradle/
 
 epam-gym-app-trainer-workload-service/build/
 epam-gym-app-trainer-workload-service/.gradle/
+epam-gym-app-trainer-workload-service/gradle.properties
