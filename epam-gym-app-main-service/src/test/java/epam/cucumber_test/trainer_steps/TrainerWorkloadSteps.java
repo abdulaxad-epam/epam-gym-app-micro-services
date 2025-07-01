@@ -1,4 +1,4 @@
-package epam.cucumber_test;
+package epam.cucumber_test.trainer_steps;
 
 import epam.client.dto.TrainerWorkloadSummaryInMonthsResponseDTO;
 import epam.client.dto.TrainerWorkloadSummaryInYearsResponseDTO;
@@ -14,7 +14,6 @@ import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import org.apache.activemq.command.ActiveMQBytesMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
@@ -23,7 +22,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 
@@ -33,9 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-@Transactional
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TrainerWorkloadSteps {
+
+public class TrainerWorkloadSteps{
 
     @LocalServerPort
     private int port;

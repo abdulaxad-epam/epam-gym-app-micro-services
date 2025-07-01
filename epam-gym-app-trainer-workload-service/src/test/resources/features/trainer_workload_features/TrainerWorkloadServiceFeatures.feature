@@ -1,8 +1,5 @@
 Feature: Trainer Workload Service Layer Operations
 
-  Background:
-
-
   Scenario: Add new training - Creates a new trainer workload
     Given a TrainerWorkloadRequestDTO for trainer "robert.brown" with first name "New", last name "Trainer", active status "true", date "2025-07-01", duration 60, and action type "ADD"
     When the actionOn method is called with the request DTO
@@ -16,19 +13,34 @@ Feature: Trainer Workload Service Layer Operations
 
   Scenario: Add training - Updates an existing trainer workload
     Given an existing TrainerWorkload for trainer "robert.brown" with initial daily duration 120 for date "2025-07-02"
-    And a TrainerWorkloadRequestDTO for trainer "robert.brown" with first name "Existing", last name "Trainer", active status "true", date "2025-07-02", duration 90, and action type "ADD"
+    And a TrainerWorkloadRequestDTO for trainer "robert.brown" with first name "Robert", last name "Brown", active status "true", date "2025-07-02", duration 90, and action type "ADD"
     When the actionOn method is called with the request DTO
     Then a TrainerWorkloadResponseDTO should be returned
+    And the response DTO's training duration should be 210 minutes
     And the response DTO's username should be "robert.brown"
     And the response DTO's training date should be "2025-07-02"
     And the trainer workload repository save method should be called
     And the trainer workload summary service produce method should be called with active status "true"
 
+  Scenario: Add training - Throws DailyTrainingDurationExceededException (Daily training duration became more then 480 minutes(8 hours))
+    Given an existing TrainerWorkload for trainer "robert.brown" with initial daily duration 400 for date "2025-07-02"
+    And a TrainerWorkloadRequestDTO for trainer "robert.brown" with first name "Existing", last name "Trainer", active status "true", date "2025-07-02", duration 90, and action type "ADD"
+    When the actionOn method is called with the request DTO
+    Then on response should throw exception DailyTrainingDurationExceededException
+    And on message should include "Training duration cannot be more than 8 hours (480 minutes) for a day"
+    And a TrainerWorkloadResponseDTO should be null
+
+
   Scenario: Delete training - Updates an existing trainer workload
     Given an existing TrainerWorkload for trainer "robert.brown" with initial daily duration 100 for date "2025-07-03"
     And a TrainerWorkloadRequestDTO for trainer "robert.brown" with first name "Existing", last name "Del", active status "true", date "2025-07-03", duration 40, and action type "DELETE"
     When the actionOn method is called with the request DTO
-    Then a TrainerWorkloadResponseDTO should be null
+    Then a TrainerWorkloadResponseDTO should be returned
+    And the response DTO's training duration should be 60 minutes
+    And the response DTO's username should be "robert.brown"
+    And the response DTO's training date should be "2025-07-03"
+    And the trainer workload repository save method should be called
+    And the trainer workload summary service produce method should be called with active status "true"
 
 
   Scenario: Delete training - Trainer workload not found

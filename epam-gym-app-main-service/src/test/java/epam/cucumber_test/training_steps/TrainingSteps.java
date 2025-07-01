@@ -1,4 +1,4 @@
-package epam.cucumber_test;
+package epam.cucumber_test.training_steps;
 
 import epam.client.dto.TrainerWorkloadSummaryInMonthsResponseDTO;
 import epam.client.dto.TrainerWorkloadSummaryInYearsResponseDTO;
@@ -14,9 +14,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import jakarta.jms.JMSException;
+import jakarta.validation.constraints.NotNull;
 import org.apache.activemq.Message;
 import org.apache.activemq.command.ActiveMQBytesMessage;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
@@ -25,8 +25,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -40,8 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-@Transactional(propagation = Propagation.REQUIRES_NEW)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TrainingSteps {
 
     @LocalServerPort
@@ -54,6 +50,10 @@ public class TrainingSteps {
     private String authToken;
     private ResponseEntity<?> latestResponse;
     private static UUID createdTrainingId;
+
+    private @NotNull String url() {
+        return "http://localhost:" + port;
+    }
 
     @Given("I am authenticated as a {string} user {string} with password {string}")
     public void iAmAuthenticatedAsAUserWithPassword(String role, String username, String password) {
@@ -180,7 +180,7 @@ public class TrainingSteps {
         }
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        latestResponse = restTemplate.exchange("http://localhost:" + port + endpoint + "/" + trainingId, HttpMethod.DELETE, entity, String.class);
+        latestResponse = restTemplate.exchange(url() + endpoint + "/" + trainingId, HttpMethod.DELETE, entity, String.class);
     }
 
     @Then("the training deletion response status should be {int}")

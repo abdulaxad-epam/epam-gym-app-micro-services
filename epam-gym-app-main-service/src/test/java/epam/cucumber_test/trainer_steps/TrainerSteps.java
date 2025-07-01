@@ -1,4 +1,4 @@
-package epam.cucumber_test;
+package epam.cucumber_test.trainer_steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,8 +10,8 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
@@ -20,8 +20,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -34,8 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Transactional(propagation = Propagation.REQUIRES_NEW)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+
 public class TrainerSteps {
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
@@ -50,6 +47,10 @@ public class TrainerSteps {
     private HttpHeaders headers = new HttpHeaders();
     private String trainerUpdateRequestJson;
     private URI trainerEndpointUri;
+
+    private @NotNull String url() {
+        return "http://localhost:" + port;
+    }
 
     @Given("I am authenticated as user {string} with password {string}")
     public void iAmAuthenticatedAsUserWithPassword(String username, String password) throws JsonProcessingException {
@@ -187,7 +188,7 @@ public class TrainerSteps {
 
     @When("I send a PATCH request to trainer endpoint {string} with status {string}")
     public void iSendAPatchRequestToTrainerEndpointWithStatus(String endpoint, String isActive) {
-        URI uri = UriComponentsBuilder.fromUriString("http://localhost:" + port + endpoint).queryParam("isActive", isActive).build().toUri();
+        URI uri = UriComponentsBuilder.fromUriString(url() + endpoint).queryParam("isActive", isActive).build().toUri();
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 

@@ -1,4 +1,4 @@
-package epam.cucumber_test;
+package epam.cucumber_test.trainee_steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,8 +10,8 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
@@ -20,8 +20,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -33,8 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Transactional(propagation = Propagation.REQUIRES_NEW)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TraineeSteps {
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
@@ -48,6 +44,10 @@ public class TraineeSteps {
     private ResponseEntity<String> latestResponse;
     private final HttpHeaders headers = new HttpHeaders();
     private String traineeUpdateRequestJson;
+
+    private @NotNull String url() {
+        return "http://localhost:" + port;
+    }
 
     @Given("I am authenticated as trainee user {string} with password {string}")
     public void iAmAuthenticatedAsUserWithPassword(String username, String password) throws JsonProcessingException {
@@ -76,12 +76,7 @@ public class TraineeSteps {
 
     @When("I get trainee details using endpoint {string}")
     public void getTraineeDetailsUsingEndpoint(String endpoint) {
-        latestResponse = restTemplate.exchange(
-                "http://localhost:" + port + endpoint,
-                HttpMethod.GET,
-                new HttpEntity<>(headers),
-                String.class
-        );
+        latestResponse = restTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.GET, new HttpEntity<>(headers), String.class);
     }
 
     @Then("the trainee profile should be returned")
@@ -129,7 +124,7 @@ public class TraineeSteps {
     @When("I retrieve trainings for trainee with filters:")
     public void iRetrieveTrainingsForTraineeWithFilters(DataTable dataTable) {
         Map<String, String> filters = dataTable.asMap(String.class, String.class);
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("http://localhost:" + port);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(url());
 
         filters.forEach(uriBuilder::queryParam);
         StringBuilder queryParams = new StringBuilder();
@@ -172,8 +167,9 @@ public class TraineeSteps {
     @When("I send a PUT request to endpoint {string}")
     public void iSendAPutRequestToEndpoint(String endpoint) {
         HttpEntity<String> requestEntity = new HttpEntity<>(traineeUpdateRequestJson, headers);
-        latestResponse = restTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.PUT, requestEntity, String.class);
+        latestResponse = restTemplate.exchange(url() + endpoint, HttpMethod.PUT, requestEntity, String.class);
     }
+
 
     @Then("the updated trainee profile should contain:")
     public void theUpdatedTraineeProfileShouldContain(DataTable dataTable) throws JsonProcessingException {

@@ -9,9 +9,6 @@ import org.junit.platform.suite.api.Suite;
 import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 
-
-
-
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features")

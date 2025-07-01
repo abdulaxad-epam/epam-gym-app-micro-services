@@ -1,4 +1,4 @@
-package epam.cucumber_test;
+package epam.cucumber_test.training_type_steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -10,7 +10,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.springframework.boot.test.context.SpringBootTest;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
@@ -19,8 +19,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-@Transactional(propagation = Propagation.REQUIRES_NEW)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+
 public class TrainingTypeSteps {
 
     @LocalServerPort
@@ -43,6 +40,10 @@ public class TrainingTypeSteps {
     private ResponseEntity<?> latestResponse;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private @NotNull String url() {
+        return "http://localhost:" + port;
+    }
 
 
     @Given("I am authenticated as a {string} user {string} with password {string} for training types")
@@ -74,7 +75,7 @@ public class TrainingTypeSteps {
         }
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        latestResponse = restTemplate.exchange("http://localhost:" + port + endpoint, HttpMethod.GET, entity, String.class);
+        latestResponse = restTemplate.exchange(url() + endpoint, HttpMethod.GET, entity, String.class);
     }
 
     @Then("the training types response status should be {int}")

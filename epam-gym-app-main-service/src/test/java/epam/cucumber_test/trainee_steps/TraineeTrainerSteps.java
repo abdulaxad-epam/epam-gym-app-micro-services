@@ -1,4 +1,4 @@
-package epam.cucumber_test;
+package epam.cucumber_test.trainee_steps;
 
 import epam.dto.request_dto.AuthenticateRequestDTO;
 import epam.dto.response_dto.AuthenticationResponseDTO;
@@ -7,8 +7,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
@@ -18,8 +18,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.util.List;
@@ -30,9 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
-@Transactional(propagation = Propagation.REQUIRES_NEW)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TraineeTrainerSteps {
 
     @LocalServerPort
@@ -45,6 +40,10 @@ public class TraineeTrainerSteps {
     private ResponseEntity<String> updateResponse;
 
     private String authToken;
+
+    private @NotNull String url() {
+        return "http://localhost:" + port;
+    }
 
 
     @Given("I am authenticated as user {string} with password {string} to get trainee trainer")
@@ -134,7 +133,7 @@ public class TraineeTrainerSteps {
 
     @When("I send a PUT request to {string} with trainers {string} without authentication")
     public void iSendAPutRequestToWithTrainersWithoutAuthentication(String endpoint, String trainerUsernames) throws Exception {
-        URI uri = new URI("http://localhost:" + port + endpoint + "?trainers=" +
+        URI uri = new URI(url() + endpoint + "?trainers=" +
                 trainerUsernames.replace(",", "&trainers="));
 
         updateResponse = restTemplate.exchange(uri, HttpMethod.PUT, null, String.class);

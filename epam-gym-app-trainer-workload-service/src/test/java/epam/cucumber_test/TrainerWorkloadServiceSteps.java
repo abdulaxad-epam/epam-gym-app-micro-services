@@ -44,6 +44,7 @@ import static org.mockito.Mockito.when;
 public class TrainerWorkloadServiceSteps {
 
     private static final Logger log = LoggerFactory.getLogger(TrainerWorkloadServiceSteps.class);
+
     @Mock
     private TrainerWorkloadRepository trainerWorkloadRepository;
 
@@ -88,8 +89,6 @@ public class TrainerWorkloadServiceSteps {
                 .actionType(actionType)
                 .build();
 
-        when(trainerWorkloadRepository.findTrainerWorkloadByTrainerUsername(username))
-                .thenReturn(null);
 
         when(trainerWorkloadRepository.save(any(TrainerWorkload.class)))
                 .thenAnswer(invocation -> {
@@ -126,8 +125,8 @@ public class TrainerWorkloadServiceSteps {
         TrainerWorkload existingWorkload = TrainerWorkload.builder()
                 .id(String.valueOf(predefinedId))
                 .trainerUsername(username)
-                .trainerFirstName("Existing")
-                .trainerLastName("Trainer")
+                .trainerFirstName("Robert")
+                .trainerLastName("Brown")
                 .isActive(true)
                 .years(new ArrayList<>(Collections.singletonList(initialYearlyWorkload)))
                 .build();
@@ -155,6 +154,7 @@ public class TrainerWorkloadServiceSteps {
         assertNotNull(serviceResponseDTO, "Service should return a response DTO");
         assertNull(caughtException, "No exception should have been caught");
     }
+
     @Then("a TrainerWorkloadResponseDTO should be null")
     public void aTrainerWorkloadResponseDTOShouldBeNull() {
         assertNull(serviceResponseDTO, "Service should return null");
@@ -245,4 +245,16 @@ public class TrainerWorkloadServiceSteps {
     }
 
 
+    @Then("on response should throw exception DailyTrainingDurationExceededException")
+    public void onResponseShouldThrowExceptionDailyTrainingDurationExceededException() {
+        assertNotNull(caughtException, "An exception should have been thrown");
+        assertInstanceOf(DailyTrainingDurationExceededException.class, caughtException, "Expected DailyTrainingDurationExceededException");
+
+    }
+
+    @And("on message should include {string}")
+    public void onMessageShouldInclude(String arg0) {
+        assertTrue(caughtException.getMessage().contains(arg0));
+
+    }
 }
